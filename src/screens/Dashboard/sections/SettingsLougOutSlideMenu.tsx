@@ -1,25 +1,18 @@
 import React, { useState } from "react";
-import { BiBarChartAlt2, BiBriefcase } from "react-icons/bi";
 import { CiSettings } from "react-icons/ci";
-import { FaMoneyCheckAlt } from "react-icons/fa";
-import { IoHome } from "react-icons/io5";
-import { MdPayment, MdVerified } from "react-icons/md";
-import { TbMoneybag } from "react-icons/tb";
+import { IoLogOut } from "react-icons/io5";
 import { useNavigate } from "react-router-dom"; // make sure you are using react-router
 
-export const SlideMenuByAnima = (): JSX.Element => {
+export const SettingsLougOutSlideMenu = (): JSX.Element => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { id: 1, path: "/", label: "Dashboard", icon:IoHome },
-    { id: 2, path: "/budgetAutomation", label: "Budget Automation", multiline: true, icon:TbMoneybag},
-    { id: 3, path: "/taxCalculations", label: "Tax Calculations", multiline: true, icon:FaMoneyCheckAlt },
-    { id: 4, path: "/dataAnalytics", label: "Data Analytics", multiline: true, icon:BiBarChartAlt2 },
-    { id: 5, path: "/compliance", label: "Compliance", icon: MdVerified },
+    { id: 1, path: "/settings", label: "Settings", icon: CiSettings, multiline: true },
+    { id: 2, path: "/logOut", label: "Loug Out", icon:IoLogOut, multiline: false },
   ];
 
   // Track the currently active item's ID
-  const [activeId, setActiveId] = useState<number>(1); // default active item
+  const [activeId, setActiveId] = useState<number>(0); // default active item
 
   const handleItemClick = (id: number, path: string) => {
     setActiveId(id);       // update active menu
@@ -27,7 +20,7 @@ export const SlideMenuByAnima = (): JSX.Element => {
   };
 
   return (
-    <div className="w-[326px] py-4">
+    <div className="w-[326px] py-4 top-[100px]">
       <ul className="flex flex-col space-y-4">
         {menuItems.map((item) => {
           const isActive = item.id === activeId;
@@ -43,7 +36,7 @@ export const SlideMenuByAnima = (): JSX.Element => {
               )}
 
               <div
-                className={`flex items-center px-4 py-2 ml-[10px] transition-colors duration-200 ${
+                className={`flex items-center px-4 py-2 ml-[10px]  top-[546px] transition-colors duration-200 ${
                   isActive ? "text-white" : "text-[#c2c0ff]"
                 }`}
               >

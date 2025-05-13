@@ -11,6 +11,7 @@ import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
 import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
 import { TransactionsTableByAnima } from "./sections/TransactionsTableByAnima";
+import { SettingsLougOutSlideMenu } from "./sections/SettingsLougOutSlideMenu";
 
 // Action buttons data
 const actionButtons = [
@@ -26,69 +27,20 @@ export const Dashboard = (): JSX.Element => {
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full">
       <div className="bg-[#faf9ff] overflow-hidden w-[1440px] relative">
         {/* Sidebar */}
-        <div className="w-[280px] h-full fixed top-0 left-[18px] bg-[#5a57ff] rounded-[0px_48px_48px_0px] z-10">
-          <div className="w-[279px] h-[819px] mt-[29px] bg-[#5a57ff] rounded-[0px_16px_16px_0px]">
-            <div className="pt-20 pl-[93px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
+        <div className="w-[250px] h-full fixed top-0  bg-[#5a57ff] rounded-[0px_90px_90px_0px] z-10 overflow-auto">
+          
+            <div className="pt-10 pl-[53px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
               LIKUTA Track
             </div>
-
-            {/* Sidebar icons */}
-            <div className="relative">
-              <img
-                className="absolute w-[41px] h-[37px] top-[62px] left-[68px]"
-                alt="Home page"
-                src="/home-page.png"
-              />
-
-              <img
-                className="absolute w-8 h-[42px] top-[148px] left-[70px]"
-                alt="Money bag"
-                src="/money-bag-2.png"
-              />
-
-              <img
-                className="absolute w-[37px] h-[60px] top-[231px] left-[70px]"
-                alt="Paycheque"
-                src="/paycheque.png"
-              />
-
-              <img
-                className="absolute w-[54px] h-[37px] top-[335px] left-[58px]"
-                alt="Brief"
-                src="/brief.png"
-              />
-
-              <img
-                className="absolute w-[34px] h-[34px] top-[423px] left-[71px]"
-                alt="Assured workload"
-                src="/assured-workload.png"
-              />
-
-              <img
-                className="absolute w-[35px] h-[52px] top-[577px] left-[67px]"
-                alt="Settings"
-                src="/settings.png"
-              />
-
-              <img
-                className="absolute w-[45px] h-[39px] top-[651px] left-[71px]"
-                alt="Logout"
-                src="/logout.png"
-              />
+            
+            <div className="pt-[60px]">
+             <SlideMenuByAnima />
             </div>
 
-            {/* Slide menu component */}
-            <SlideMenuByAnima />
-
-            {/* Compliance menu item */}
-            <div className="w-[233px] h-[72px] absolute top-[526px] left-[71px]">
-              <div className="flex w-[77px] items-center gap-3.5 relative top-[19px] left-[65px]">
-                <div className="relative w-fit mt-[-1.00px] mr-[-47.00px] [font-family:'Poppins',Helvetica] font-normal text-[#c2c0ff] text-xl tracking-[0] leading-[normal]">
-                  Compliance
-                </div>
-              </div>
+            <div className="pt-[100px]">
+              <SettingsLougOutSlideMenu />
             </div>
-          </div>
+          
         </div>
 
         {/* Main content */}
