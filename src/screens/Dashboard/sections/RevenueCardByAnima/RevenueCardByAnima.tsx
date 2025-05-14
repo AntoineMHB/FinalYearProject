@@ -78,6 +78,12 @@ export const RevenueCardByAnima = (): JSX.Element => {
                 </div>
               </CardContent>
             </Card>
+
+
+
+
+
+
           ))}
         </div>
       </div>
