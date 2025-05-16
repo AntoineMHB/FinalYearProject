@@ -4,21 +4,27 @@ import { Card, CardContent } from "../../../../components/ui/card";
 import { Progress } from "../../../../components/ui/progress";
 
 export const RevenueCardByAnima = (): JSX.Element => {
-  // Data for budget cards
-  const budgetData = [
+  // Data for first three cards
+  const cardData = [
     {
       title: "Total Budget Amount",
-      image: "/rectangle-20.svg",
+      value: "$500,000",
+      valueColor: "text-[#04AD3C]",
+
     },
     {
       title: "Spent Budget",
-      image: "/rectangle-21.svg",
+      value: "$320,00",
+      valueColor: "text-[#EB0606]",
+
     },
     {
       title: "Remaining Budget",
-      image: "/rectangle-22.svg",
+      value: "$1800",
+      valueColor: "text-[#FF8B06]",
+
     },
-  ];
+  ]
 
   // Data for category breakdown
   const categoryData = [
@@ -28,30 +34,32 @@ export const RevenueCardByAnima = (): JSX.Element => {
 
   return (
     <section className="w-full py-6">
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-4 gap-2 md:grid-cols-2 lg:grid-cols-4">
         {/* First three budget cards */}
-        {budgetData.map((item, index) => (
-          <Card key={index} className="relative overflow-hidden border-0">
-            <img
+        {cardData.map((card, index) => (
+          <Card key={index} className="relative overflow-hidden border border-solid border-[#5a57ff1a] shadow-[0px_4px_4px_#00000040]">
+            <div
               className="w-full h-[239px] object-cover"
-              alt={`${item.title} background`}
-              src={item.image}
+              // alt={`${item.title} background`}
+              // src={item.image}
             />
             <CardContent className="absolute top-6 left-6">
               <h3 className="font-medium text-base text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]">
-                {item.title}
+                {card.title}
               </h3>
+
+              <div
+                  className={`mt-6 font-bold text-2xl font-['Poppins',Helvetica] ${card.valueColor}`}
+                >
+                  {card.value}
+                </div>
             </CardContent>
           </Card>
         ))}
 
         {/* Budget Projection card */}
-        <Card className="relative overflow-hidden border-0">
-          <img
-            className="w-full h-[239px] object-cover"
-            alt="Budget Projection background"
-            src="/rectangle-23.svg"
-          />
+        <Card className="relative overflow-hidden border border-solid border-[#5a57ff1a] shadow-[0px_4px_4px_#00000040]">
+          
           <CardContent className="absolute top-6 left-6 w-full pr-6">
             <h3 className="font-medium text-base text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a] mb-[79px]">
               Budget Projection

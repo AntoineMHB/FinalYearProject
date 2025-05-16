@@ -26,7 +26,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
       valueColor: "text-[#ff7723]",
       actionText: "Submit now",
       actionColor: "text-[#ea0505]",
-      bgImage: "/rectangle-17.svg",
+      bgImage: "null",
     },
     {
       title: "Compliance Alerts",
@@ -34,7 +34,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
       valueColor: "text-[#ea0505]",
       actionText: "Review issues",
       actionColor: "text-white",
-      bgImage: "/rectangle-18.svg",
+      bgImage: "null",
     },
     {
       title: "Budget Utilization",
@@ -42,7 +42,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
       valueColor: "text-black",
       actionText: "Analyse spending",
       actionColor: "text-[#ea0505]",
-      bgImage: "/rectangle-19.svg",
+      bgImage: "null",
     },
   ];
 
@@ -56,10 +56,10 @@ export const RevenueCardByAnima = (): JSX.Element => {
               className="relative h-[152px] rounded-3xl border border-solid border-[#5a57ff1a] shadow-[0px_4px_4px_#00000040] overflow-hidden"
             >
               {card.bgImage && (
-                <img
+                <div
                   className="absolute inset-0 w-full h-full object-cover"
-                  alt="Background"
-                  src={card.bgImage}
+                  // alt="Background"
+                  // src={card.bgImage}
                 />
               )}
               <CardContent className="relative z-10 flex flex-col h-full p-5">
@@ -78,11 +78,6 @@ export const RevenueCardByAnima = (): JSX.Element => {
                 </div>
               </CardContent>
             </Card>
-
-
-
-
-
 
           ))}
         </div>
