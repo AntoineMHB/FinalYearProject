@@ -101,49 +101,11 @@ export const BudgetAutomation = (): JSX.Element => {
         </div>
 
         {/* Main content */}
-        <main className="ml-[280px] p-6">
+        <main className="ml-[250px] p-6">
           {/* Revenue cards section */}
           <RevenueCardByAnima />
 
-          {/* Budget metrics section */}
-          <div className="mt-8 grid grid-cols-3 gap-8">
-            {budgetMetrics.map((metric, index) => (
-              <div
-                key={index}
-                className={`font-bold ${metric.color} text-[35px] [font-family:'Poppins',Helvetica]`}
-              >
-                {metric.value}
-              </div>
-            ))}
-          </div>
-
-          {/* Budget total section */}
-          <div className="mt-8 flex items-center justify-between">
-            <div className="font-bold text-black text-[35px] [font-family:'Poppins',Helvetica]">
-              $700,000
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Badge className="bg-emerald-100 text-green-600 rounded-[20px] px-4 py-1">
-                25.0%
-              </Badge>
-              <img className="w-5 h-5" alt="Money bag" src="/money-bag-2.png" />
-            </div>
-          </div>
-
-          {/* Progress bars */}
-          <div className="mt-8 space-y-6">
-            <Progress
-              value={40}
-              className="h-2.5 bg-[#e3e3e3] rounded-[20px]"
-            />
-            <Progress
-              value={60}
-              className="h-2.5 bg-[#e3e3e3] rounded-[20px]"
-            />
-          </div>
-
-         <div className="mt-8 flex space-x-72">
+         <div className="mt-1 flex space-x-72">
                       {/* Filter section */}
            <div className="pl-[70px] mt-8 flex items-center gap-4">
             <Select>
@@ -170,7 +132,7 @@ export const BudgetAutomation = (): JSX.Element => {
           </div>
 
           {/* Create new budget button */}
-           <Button className="mt-8 bg-white text-black border border-gray-300 rounded-[20px] shadow-md px-6 py-3 font-medium text-xl">
+           <Button className="mt-8 bg-white hover:bg-slate-200 text-black border border-gray-300 rounded-[20px] shadow-md px-6 py-3 font-medium text-xl">
             Create New Budget
            </Button>
 

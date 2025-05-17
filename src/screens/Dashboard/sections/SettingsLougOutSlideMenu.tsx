@@ -20,7 +20,7 @@ export const SettingsLougOutSlideMenu = (): JSX.Element => {
   };
 
   return (
-    <div className="w-[326px] py-4 top-[100px]">
+    <div className="w-[326px] py-4">
       <ul className="flex flex-col space-y-4">
         {menuItems.map((item) => {
           const isActive = item.id === activeId;

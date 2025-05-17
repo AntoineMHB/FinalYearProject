@@ -1,7 +1,8 @@
 import React from "react";
 import { Button } from "../../../../components/ui/button";
-import { Card, CardContent } from "../../../../components/ui/card";
+import { Card, CardContent, CardTitle } from "../../../../components/ui/card";
 import { Progress } from "../../../../components/ui/progress";
+import { Badge } from "../../../../components/ui/badge";
 
 export const RevenueCardByAnima = (): JSX.Element => {
   // Data for first three cards
@@ -34,7 +35,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
 
   return (
     <section className="w-full py-6">
-      <div className="grid grid-cols-4 gap-2 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid  gap-1 md:grid-cols-2 lg:grid-cols-4 sm:grid-cols-1">
         {/* First three budget cards */}
         {cardData.map((card, index) => (
           <Card key={index} className="relative overflow-hidden border border-solid border-[#5a57ff1a] shadow-[0px_4px_4px_#00000040]">
@@ -49,7 +50,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
               </h3>
 
               <div
-                  className={`mt-6 font-bold text-2xl font-['Poppins',Helvetica] ${card.valueColor}`}
+                  className={`mt-20 font-bold text-[35px] font-['Poppins',Helvetica] ${card.valueColor}`}
                 >
                   {card.value}
                 </div>
@@ -58,12 +59,26 @@ export const RevenueCardByAnima = (): JSX.Element => {
         ))}
 
         {/* Budget Projection card */}
-        <Card className="relative overflow-hidden border border-solid border-[#5a57ff1a] shadow-[0px_4px_4px_#00000040]">
-          
-          <CardContent className="absolute top-6 left-6 w-full pr-6">
+        <Card className="relative overflow-hidden border border-solid border-[#5a57ff1a] shadow-[0px_4px_4px_#00000040] w-[260px]">
+          <CardTitle className="absolute top-6 left-6 w-full pr-6">
             <h3 className="font-medium text-base text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a] mb-[79px]">
               Budget Projection
             </h3>
+
+          </CardTitle>
+          <CardContent className="absolute top-14 left-[-5px] w-full pr-6">
+            
+            <div className="flex items-center justify-between space-x-1">
+              <div className="pt-[-20px] font-bold text-black text-[35px] [font-family:'Poppins',Helvetica]">
+                $700,000
+               </div>
+
+              <Badge className="bg-emerald-100 text-green-600 rounded-[20px] px-4 py-1">
+                25.0%
+              </Badge>
+
+            </div>
+
 
             <div className="space-y-4">
               <h4 className="font-medium text-sm text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]">
