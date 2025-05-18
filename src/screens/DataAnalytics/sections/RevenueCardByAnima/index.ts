@@ -1,0 +1,1 @@
+export { RevenueCardByAnima } from "./RevenueCardByAnima";

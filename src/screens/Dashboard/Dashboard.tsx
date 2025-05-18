@@ -27,17 +27,17 @@ export const Dashboard = (): JSX.Element => {
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full">
       <div className="bg-[#faf9ff] overflow-hidden w-[1440px] relative">
         {/* Sidebar */}
-        <div className="w-[250px] h-full fixed top-0  bg-[#5a57ff] rounded-[0px_90px_90px_0px] z-10 overflow-auto">
+        <div className="w-[250px] h-full fixed top-0  bg-[#5a57ff] rounded-[0px_30px_30px_0px] z-10 overflow-auto scrollbar-hide">
           
             <div className="pt-10 pl-[53px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
               LIKUTA Track
             </div>
             
-            <div className="pt-[60px]">
+            <div className="pt-[30px]">
              <SlideMenuByAnima />
             </div>
 
-            <div className="pt-[100px]">
+            <div className="pt-[30px]">
               <SettingsLougOutSlideMenu />
             </div>
           
