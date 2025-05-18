@@ -4,6 +4,7 @@ import { Dashboard } from "./screens/Dashboard/Dashboard";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { BudgetAutomation } from "./screens/BudgetAutomation/BudgetAutomation";
 import { DataAnalytics } from "./screens/DataAnalytics/DataAnalytics";
+import { Compliance } from "./screens/Compliance/sections/Compliance";
 
 createRoot(document.getElementById("app") as HTMLElement).render(
   <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById("app") as HTMLElement).render(
         <Route path="/" element={<Dashboard />} />
         <Route path="/budgetAutomation" element={<BudgetAutomation />} />
         <Route path="/dataAnalytics" element={<DataAnalytics />} />
+        <Route path="/compliance" element={<Compliance />} />
       </Routes>
       
       {/* <BudgetAutomation /> */}
