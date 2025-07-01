@@ -8,7 +8,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:8080/forgotPassword', { email });
+      await axios.post("http://localhost:8080/forgotPassword", { email });
       setMessage("Check your email for the reset link.");
     } catch (err) {
       setMessage("Something went wrong.");
