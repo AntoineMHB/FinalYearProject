@@ -12,7 +12,8 @@ import { Login } from "./screens/Login/Login";
 import { Signup } from "./screens/Signup/Signup";
 import { ResetPassword } from "./screens/ResetPassword/ResetPassword";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
-import { PrivateRoute } from "./components/privateRoute";
+import { PrivateRoute } from "./components/PrivateRoute";
+
 
 
 function App() {
@@ -29,7 +30,7 @@ function App() {
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/signupPage" element={<Signup />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
-        <Route path="/resetPassword" element={<ResetPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Routes */}
         <Route path="/" element={<PrivateRoute isLoggedIn={isLoggedIn}><Dashboard /></PrivateRoute>} />
