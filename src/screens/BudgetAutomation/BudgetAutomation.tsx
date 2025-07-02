@@ -10,6 +10,7 @@ import { Progress } from "../../components/ui/progress";
 import {
   Select,
   SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
@@ -19,6 +20,7 @@ import { TransactionsTableByAnima } from "./sections/TransactionsTableByAnima";
 import { SlideMenuByAnima } from "../Dashboard/sections/SlideMenuByAnima";
 import { SettingsLougOutSlideMenu } from "../Dashboard/sections/SettingsLougOutSlideMenu";
 import { Bell } from "lucide-react";
+import axios from "axios";
 
 type User = {
   userId: number;
@@ -27,13 +29,42 @@ type User = {
   email: string;
 }
 
+interface Department {
+  id: number;
+  name: string;
+  user: {
+    id: number;
+  };
+}
+
 export const BudgetAutomation = (): JSX.Element => {
     const [user, setUser] = useState<User | null>(null);
+    const [departments, setDepartments] = useState<Department[]>([]);
   
     useEffect(() => {
       const userData = localStorage.getItem("user");
       if (userData) {
         setUser(JSON.parse(userData));
+      }
+    }, []);
+
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      
+      if (token) {
+        axios.get("http://localhost:8080/api/departments", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setDepartments(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching departments:", error);
+        });
+      } else {
+        console.error("No token found in localStorage");
       }
     }, []);
   // Data for the budget metrics
@@ -123,12 +154,14 @@ export const BudgetAutomation = (): JSX.Element => {
 
             <Select>
               <SelectTrigger className="w-36 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
-                <SelectValue placeholder="IT" />
+                <SelectValue placeholder="Department" />
               </SelectTrigger>
               <SelectContent>
-                <div className="w-[60px] [font-family:'Poppins',Helvetica] font-medium text-[#666668] text-xs">
-                  IT
-                </div>
+                 {departments.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id.toString()}>
+                      {dept.name}
+                    </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

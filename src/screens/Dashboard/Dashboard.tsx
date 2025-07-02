@@ -14,6 +14,7 @@ import { TransactionsTableByAnima } from "./sections/TransactionsTableByAnima";
 import { SettingsLougOutSlideMenu } from "./sections/SettingsLougOutSlideMenu";
 import { Bell } from "lucide-react";
 import AddBudgetForm from "../../components/AddBudgetForm";
+import AddRevenueForm from "../../components/AddRevenueForm";
 
 
 // Action buttons data
@@ -37,6 +38,7 @@ export const Dashboard = (): JSX.Element => {
   const [activeAction, setActiveAction] = useState("");
 
   const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
+  const [showAddRevenueForm, setShowAddRevenueForm] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -45,15 +47,16 @@ export const Dashboard = (): JSX.Element => {
     }
   }, []);
 
-      // Function to handle the display of the Add Budget form
-    const handleAddBudgetClick = () => {
-      setShowAddBudgetForm(true);
-    };
   
     // Function to close the Add Budget form
     const handleBudgetAdded = () => {
       setShowAddBudgetForm(false); // Close the form after adding an budget
     };
+
+       const handleRevenueAdded = () => {
+      setShowAddRevenueForm(false); // Close the form after adding an budget
+    };
+
 
     const handleCloseForm = () => {
       // setShowAddBudgetForm(false); // Close the form
@@ -146,6 +149,18 @@ export const Dashboard = (): JSX.Element => {
           </div>
         </div>
       )}
+
+
+      {activeAction === "showAddBudget" && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+            <AddRevenueForm onRevenueAdded={handleRevenueAdded} onClose={handleCloseForm}  />
+          </div>
+        </div>
+      )}
+
+
+
 
           {/* Action buttons */}
           <div className="flex gap-3 mb-8">
