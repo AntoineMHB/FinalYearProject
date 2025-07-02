@@ -1,5 +1,5 @@
-import { BellIcon } from "lucide-react";
-import React from "react";
+import { Bell, BellIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   AvatarFallback,
@@ -19,7 +19,22 @@ import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
 import { SettingsLougOutSlideMenu } from "../Dashboard/sections/SettingsLougOutSlideMenu";
 
+type User = {
+  userId: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+}
+
 export const DataAnalytics = (): JSX.Element => {
+      const [user, setUser] = useState<User | null>(null);
+    
+      useEffect(() => {
+        const userData = localStorage.getItem("user");
+        if (userData) {
+          setUser(JSON.parse(userData));
+        }
+      }, []);
   // Data for the financial metrics
   const financialMetrics = [
     {
@@ -75,7 +90,7 @@ export const DataAnalytics = (): JSX.Element => {
 
             <div className="relative">
               <Button variant="ghost" size="icon" className="h-6 w-6">
-                <BellIcon className="h-5 w-5" />
+                <Bell className="w-6 h-6 text-gray-600" />
                 <Badge className="absolute w-2 h-2 top-px right-px bg-[#ff5787] rounded border border-solid border-[#faf9ff]" />
               </Button>
             </div>
@@ -87,16 +102,16 @@ export const DataAnalytics = (): JSX.Element => {
                     src="https://c.animaapp.com/masu33i4lo9YhV/img/ellipse-1.png"
                     alt="User avatar"
                   />
-                  <AvatarFallback>AN</AvatarFallback>
+                  <AvatarFallback>{user?.firstname[0]}{user?.lastname[0]}</AvatarFallback>
                 </Avatar>
                 <Badge className="absolute w-3 h-3 top-1 right-0 bg-[#53e88c] rounded-md border-2 border-solid border-[#faf9ff]" />
               </div>
               <div className="flex flex-col">
                 <span className="font-['Poppins',Helvetica] font-semibold text-black text-xl">
-                  Antoine&nbsp;&nbsp;Nzanzu
+                  {user?.firstname}&nbsp;&nbsp;{user?.lastname}
                 </span>
                 <span className="font-['Poppins',Helvetica] font-light text-[#666668] text-sm">
-                  antoinenzanzu@gmail.com
+                  {user?.email}
                 </span>
               </div>
             </div>

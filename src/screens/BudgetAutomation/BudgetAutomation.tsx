@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   AvatarFallback,
@@ -18,8 +18,24 @@ import { RevenueCardByAnima } from "./sections/RevenueCardByAnima/RevenueCardByA
 import { TransactionsTableByAnima } from "./sections/TransactionsTableByAnima";
 import { SlideMenuByAnima } from "../Dashboard/sections/SlideMenuByAnima";
 import { SettingsLougOutSlideMenu } from "../Dashboard/sections/SettingsLougOutSlideMenu";
+import { Bell } from "lucide-react";
+
+type User = {
+  userId: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+}
 
 export const BudgetAutomation = (): JSX.Element => {
+    const [user, setUser] = useState<User | null>(null);
+  
+    useEffect(() => {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    }, []);
   // Data for the budget metrics
   const budgetMetrics = [
     { value: "$500,000", color: "text-[#03ad3c]" },
@@ -42,21 +58,7 @@ export const BudgetAutomation = (): JSX.Element => {
               {/* Notification icon */}
               <div className="relative w-6 h-6">
                 <div className="relative w-[19px] h-[22px] top-px left-[3px]">
-                  <img
-                    className="absolute w-[18px] h-[18px] top-px left-0"
-                    alt="Vector"
-                    src="/vector-3.svg"
-                  />
-                  <img
-                    className="absolute w-[5px] h-[3px] top-0 left-1.5"
-                    alt="Vector"
-                    src="/vector-2.svg"
-                  />
-                  <img
-                    className="absolute w-2 h-1 top-[18px] left-[5px]"
-                    alt="Vector"
-                    src="/vector-4.svg"
-                  />
+                  <Bell className="w-6 h-6 text-gray-600" />
                   <div className="absolute w-2 h-2 top-px left-[11px] bg-[#ff5787] rounded border border-solid border-[#faf9ff]" />
                 </div>
               </div>
@@ -65,16 +67,16 @@ export const BudgetAutomation = (): JSX.Element => {
               <div className="flex items-center gap-3">
                 <Avatar className="w-[50px] h-[50px] relative">
                   <AvatarImage src="/ellipse-1.png" alt="User profile" />
-                  <AvatarFallback>AN</AvatarFallback>
+                  <AvatarFallback>{user?.firstname[0]}{user?.lastname[0]}</AvatarFallback>
                   <div className="absolute w-3 h-3 top-1 right-0 bg-[#53e88c] rounded-md border-2 border-solid border-[#faf9ff]" />
                 </Avatar>
 
                 <div className="flex flex-col">
                   <span className="font-semibold text-xl text-black">
-                    Antoine&nbsp;&nbsp;Nzanzu
+                    {user?.firstname}&nbsp;&nbsp;{user?.lastname}
                   </span>
                   <span className="font-light text-sm text-[#666668]">
-                    antoinenzanzu@gmail.com
+                    {user?.email}
                   </span>
                 </div>
               </div>

@@ -1,5 +1,5 @@
 import { BellIcon, DownloadIcon, FilterIcon, SearchIcon } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SlideMenuByAnima } from "./SlideMenuByAnima";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { Input } from "../../../components/ui/input";
@@ -9,8 +9,23 @@ import { TransactionsTableByAnima } from "./TransactionsTableByAnima";
 import { Button } from "../../../components/ui/button";
 import { SettingsLougOutSlideMenu } from "../../Dashboard/sections/SettingsLougOutSlideMenu";
 
+type User = {
+  userId: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+}
+
 
 export const Compliance = (): JSX.Element => {
+    const [user, setUser] = useState<User | null>(null);
+  
+    useEffect(() => {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    }, []);
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full min-h-screen">
       <div className="bg-[#faf9ff] w-full max-w-[1440px] relative">
@@ -52,17 +67,17 @@ export const Compliance = (): JSX.Element => {
                       src="https://c.animaapp.com/mat0sth7aPU5zJ/img/ellipse-1.png"
                       alt="User avatar"
                     /> */}
-                    <AvatarFallback>AN</AvatarFallback>
+                    <AvatarFallback>{user?.firstname[0]}{user?.lastname[0]}</AvatarFallback>
                   </Avatar>
                   <div className="absolute w-3 h-3 top-1 right-0 bg-[#53e88c] rounded-md border-2 border-solid border-[#faf9ff]" />
                 </div>
 
                 <div>
                   <div className="font-semibold text-black text-xl [font-family:'Poppins',Helvetica]">
-                    Antoine Nzanzu
+                   {user?.firstname}&nbsp;&nbsp;{user?.lastname}
                   </div>
                   <div className="[font-family:'Poppins',Helvetica] font-light text-[#666668] text-sm">
-                    antoinenzanzu@gmail.com
+                    {user?.email}
                   </div>
                 </div>
               </div>

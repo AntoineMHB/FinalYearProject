@@ -12,13 +12,16 @@ import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
 import { TransactionsTableByAnima } from "./sections/TransactionsTableByAnima";
 import { SettingsLougOutSlideMenu } from "./sections/SettingsLougOutSlideMenu";
+import { Bell } from "lucide-react";
+import AddBudgetForm from "../../components/AddBudgetForm";
+
 
 // Action buttons data
 const actionButtons = [
   { id: 1, text: "Record Transaction", left: "3.5" },
-  { id: 2, text: "Create a Budget", left: "7" },
-  { id: 3, text: "Record Revenue", left: "5" },
-  { id: 4, text: "Add Expense", left: "31" },
+  { id: 2, text: "Create a Budget", left: "7", action:"showAddBudget" },
+  { id: 3, text: "Record Revenue", left: "5", action:"showAddRevenue" },
+  { id: 4, text: "Add Expense", left: "31", action:"showAddExpense" },
   { id: 5, text: "Submit Taxes", left: "31" },
 ];
 
@@ -31,6 +34,9 @@ type User = {
 
 export const Dashboard = (): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
+  const [activeAction, setActiveAction] = useState("");
+
+  const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -38,6 +44,39 @@ export const Dashboard = (): JSX.Element => {
       setUser(JSON.parse(userData));
     }
   }, []);
+
+      // Function to handle the display of the Add Budget form
+    const handleAddBudgetClick = () => {
+      setShowAddBudgetForm(true);
+    };
+  
+    // Function to close the Add Budget form
+    const handleBudgetAdded = () => {
+      setShowAddBudgetForm(false); // Close the form after adding an budget
+    };
+
+    const handleCloseForm = () => {
+      // setShowAddBudgetForm(false); // Close the form
+      setActiveAction("");
+    };
+
+    //Function to handle the button actions
+    const handleAction = (action: any) => {
+      switch (action) {
+        case "showAddBudget":
+          setActiveAction("showAddBudget");
+          break;
+        case "showAddRevenue":
+          setActiveAction("showAddRevenue");
+          break;
+        case "showAddExpense":
+          setActiveAction("showAddExpense");
+          break;
+        default:
+          console.warn("Unknown action:", action);
+        
+      }
+    }
 
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full">
@@ -75,24 +114,7 @@ export const Dashboard = (): JSX.Element => {
             {/* Notification and profile */}
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-6 h-6 relative">
-                  <img
-                    className="absolute w-[18px] h-[18px] top-px left-[3px]"
-                    alt="Vector"
-                    src="/vector.svg"
-                  />
-                  <img
-                    className="absolute w-[5px] h-[3px] top-0 left-[4.5px]"
-                    alt="Vector"
-                    src="/vector-1.svg"
-                  />
-                  <img
-                    className="absolute w-2 h-1 top-[18px] left-[8px]"
-                    alt="Vector"
-                    src="/vector-2.svg"
-                  />
-                  <div className="absolute w-2 h-2 top-px left-[14px] bg-[#ff5787] rounded border border-solid border-[#faf9ff]" />
-                </div>
+                <Bell className="w-6 h-6 text-gray-600" />
               </div>
 
               <div className="flex items-center gap-3">
@@ -116,12 +138,22 @@ export const Dashboard = (): JSX.Element => {
             </div>
           </div>
 
+                {/* Centered Modal */}
+      {activeAction === "showAddBudget" && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+            <AddBudgetForm onBudgetAdded={handleBudgetAdded} onClose={handleCloseForm}  />
+          </div>
+        </div>
+      )}
+
           {/* Action buttons */}
           <div className="flex gap-3 mb-8">
             {actionButtons.map((button) => (
               <Button
                 key={button.id}
                 variant="outline"
+                onClick={() => handleAction(button.action)}
                 className="h-[50px] bg-white rounded-[20px] border border-solid border-gray-300 shadow-[0px_4px_4px_#00000040]"
               >
                 <span
@@ -173,5 +205,6 @@ export const Dashboard = (): JSX.Element => {
         </div>
       </div>
     </div>
+    
   );
 };
