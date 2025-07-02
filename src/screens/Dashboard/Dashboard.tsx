@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Avatar,
   AvatarFallback,
@@ -22,7 +22,23 @@ const actionButtons = [
   { id: 5, text: "Submit Taxes", left: "31" },
 ];
 
+type User = {
+  userId: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+}
+
 export const Dashboard = (): JSX.Element => {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
+
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full">
       <div className="bg-[#faf9ff] overflow-hidden w-[1440px] relative">
@@ -52,7 +68,7 @@ export const Dashboard = (): JSX.Element => {
                 Dashboard
               </h1>
               <p className="[font-family:'Poppins',Helvetica] font-medium text-[#cccccc] text-base">
-                Welcome&nbsp;&nbsp;back, Antoine
+                Welcome&nbsp;&nbsp;back, {user? user.firstname : "Loading..."}
               </p>
             </div>
 
@@ -83,17 +99,17 @@ export const Dashboard = (): JSX.Element => {
                 <div className="relative">
                   <Avatar className="w-[50px] h-[50px]">
                     <AvatarImage src="/ellipse-1.png" alt="Profile" />
-                    <AvatarFallback>AN</AvatarFallback>
+                    <AvatarFallback>{user?.firstname[0]}{user?.lastname[0]}</AvatarFallback>
                   </Avatar>
                   <div className="absolute w-3 h-3 top-1 right-0 bg-[#53e88c] rounded-md border-2 border-solid border-[#faf9ff]" />
                 </div>
 
                 <div>
                   <p className="[font-family:'Poppins',Helvetica] font-semibold text-black text-xl">
-                    Antoine&nbsp;&nbsp;Nzanzu
+                    {user?.firstname}&nbsp;&nbsp;{user?.lastname}
                   </p>
                   <p className="[font-family:'Poppins',Helvetica] font-light text-[#666668] text-sm">
-                    antoinenzanzu@gmail.com
+                    {user?.email}
                   </p>
                 </div>
               </div>
