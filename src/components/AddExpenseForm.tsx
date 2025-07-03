@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { XIcon, DollarSign, FileText, Tag } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
-type AddRevenueFormProps = {
-  onRevenueAdded: (data: any | null) => void;
+type AddExpenseFormProps = {
+  onExpenseAdded: (data: any | null) => void;
   onClose: () => void;
 };
 
@@ -26,12 +26,12 @@ interface Budget {
   }
 }
 
-const AddRevenueForm: React.FC<AddRevenueFormProps> = ({ 
-  onRevenueAdded, 
+const AddExpenseForm: React.FC<AddExpenseFormProps> = ({ 
+  onExpenseAdded, 
   onClose 
 }) => {
-  const [revenueName, setRevenueName] = useState<string>("");
-  const [revenueAmount, setRevenueAmount] = useState<string>("");
+  const [expenseName, setExpenseName] = useState<string>("");
+  const [expenseAmount, setExpenseAmount] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [budgets, setBudgets] = useState<Budget[]>([]);
@@ -69,15 +69,15 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
         throw new Error("User ID not found. Please log in.");
       }
 
-      const response = await axios.post("http://localhost:8080/api/revenues", {
-        revenueName,
-        amount: revenueAmount,
+      const response = await axios.post("http://localhost:8080/api/expenses", {
+        expenseName,
+        amount: expenseAmount,
         description,
         user: { id: userId },
         budget: { id: selectedBudgetId },
       });
 
-      onRevenueAdded(response.data);
+      onExpenseAdded(response.data);
       resetForm();
     } catch (error: any) {
       console.error("Error adding revenue:", error.response || error.message || error);
@@ -91,15 +91,15 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
   };
 
   const resetForm = () => {
-    setRevenueName("");
-    setRevenueAmount("");
+    setExpenseName("");
+    setExpenseAmount("");
     setDescription("");
   };
 
   const handleCancel = () => {
     resetForm();
     onClose();
-    onRevenueAdded(null);
+    onExpenseAdded(null);
   };
 
   return (
@@ -109,10 +109,10 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="text-2xl font-poppins font-bold">
-                Add New Revenue
+                Add New Expense
               </CardTitle>
               <CardDescription className="text-white/90 mt-2">
-                Record a new revenue source to keep track of your income
+                Record a new expense source to keep track of your finances
               </CardDescription>
             </div>
             <Button
@@ -128,46 +128,46 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
 
         <CardContent className="p-6">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Revenue Name */}
+            {/* Expense Name */}
             <div className="space-y-3">
               <Label
                 htmlFor="revenue-name"
                 className="text-sm font-medium text-gray-700 flex items-center gap-2"
               >
                 <Tag className="h-4 w-4 text-[#5a57ff]" />
-                Revenue Name
+                Expense Name
                 <span className="text-red-500">*</span>
               </Label>
               <Input
                 type="text"
-                value={revenueName}
-                onChange={(e) => setRevenueName(e.target.value)}
+                value={expenseName}
+                onChange={(e) => setExpenseName(e.target.value)}
                 placeholder="e.g., Sales, Donations, Services"
-                id="revenue-name"
+                id="expense-name"
                 className="h-11"
                 required
               />
             </div>
 
-            {/* Revenue Amount */}
+            {/* Expense Amount */}
             <div className="space-y-3">
               <Label
-                htmlFor="revenue-amount"
+                htmlFor="expense-amount"
                 className="text-sm font-medium text-gray-700 flex items-center gap-2"
               >
                 <DollarSign className="h-4 w-4 text-[#5a57ff]" />
-                Revenue Amount
+                Expense Amount
                 <span className="text-red-500">*</span>
               </Label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  id="revenue-amount"
+                  id="expense-amount"
                   type="number"
                   step="0.01"
                   min="0"
-                  value={revenueAmount}
-                  onChange={(e) => setRevenueAmount(e.target.value)}
+                  value={expenseAmount}
+                  onChange={(e) => setExpenseAmount(e.target.value)}
                   placeholder="1000.00"
                   className="h-11 pl-10"
                   required
@@ -175,21 +175,21 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
               </div>
             </div>
 
-            {/* Revenue Description */}
+            {/* Expense Description */}
             <div className="space-y-3">
               <Label
                 htmlFor="revenue-description"
                 className="text-sm font-medium text-gray-700 flex items-center gap-2"
               >
                 <FileText className="h-4 w-4 text-[#5a57ff]" />
-                Revenue Description
+                Expense Description
                 <span className="text-gray-400 text-xs">(Optional)</span>
               </Label>
               <Textarea
-                id="revenue-description"
+                id="expense-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Describe the source or details of this revenue..."
+                placeholder="Describe the source or details of this expense..."
                 className="min-h-[100px] resize-none"
               />
             </div>
@@ -222,7 +222,7 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
             type="submit"
             className="flex-1 h-11 bg-[#5a57ff] hover:bg-[#4845ff]"
             onClick={handleSubmit}
-            disabled={isSubmitting || !revenueName.trim() || !revenueAmount.trim()}
+            disabled={isSubmitting || !expenseName.trim() || !expenseAmount.trim()}
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
@@ -239,4 +239,4 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
   );
 };
 
-export default AddRevenueForm;
+export default AddExpenseForm;
