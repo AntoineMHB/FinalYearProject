@@ -15,6 +15,7 @@ import { SettingsLougOutSlideMenu } from "./sections/SettingsLougOutSlideMenu";
 import { Bell } from "lucide-react";
 import AddBudgetForm from "../../components/AddBudgetForm";
 import AddRevenueForm from "../../components/AddRevenueForm";
+import axios from "axios";
 
 
 // Action buttons data
@@ -33,9 +34,18 @@ type User = {
   email: string;
 }
 
+interface Department {
+  id: number;
+  name: string;
+  user: {
+    id: number;
+  };
+}
+
 export const Dashboard = (): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
   const [activeAction, setActiveAction] = useState("");
+  const [departments, setDepartments] = useState<Department[]>([]);
 
   const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
   const [showAddRevenueForm, setShowAddRevenueForm] = useState(false);
@@ -46,6 +56,26 @@ export const Dashboard = (): JSX.Element => {
       setUser(JSON.parse(userData));
     }
   }, []);
+
+      useEffect(() => {
+        const token = localStorage.getItem("token");
+        
+        if (token) {
+          axios.get("http://localhost:8080/api/departments", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            setDepartments(response.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching departments:", error);
+          });
+        } else {
+          console.error("No token found in localStorage");
+        }
+      }, []);
 
   
     // Function to close the Add Budget form
@@ -151,7 +181,7 @@ export const Dashboard = (): JSX.Element => {
       )}
 
 
-      {activeAction === "showAddBudget" && (
+      {activeAction === "showAddRevenue" && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
             <AddRevenueForm onRevenueAdded={handleRevenueAdded} onClose={handleCloseForm}  />

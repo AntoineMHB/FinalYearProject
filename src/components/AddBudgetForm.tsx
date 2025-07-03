@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import axios from "axios";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
@@ -6,11 +6,21 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { XIcon, DollarSign, FileText, Tag } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import { Value } from "@radix-ui/react-select";
 
 type AddBudgetFormProps = {
   onBudgetAdded: (data: any | null) => void;
   onClose: () => void;
 };
+
+interface Department {
+  id: number;
+  name: string;
+  user: {
+    id: number;
+  };
+}
 
 const AddBudgetForm: React.FC<AddBudgetFormProps> = ({ 
   onBudgetAdded, 
@@ -20,6 +30,29 @@ const AddBudgetForm: React.FC<AddBudgetFormProps> = ({
   const [budgetAmount, setBudgetAmount] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
+
+
+        useEffect(() => {
+        const token = localStorage.getItem("token");
+        
+        if (token) {
+          axios.get("http://localhost:8080/api/departments", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            setDepartments(response.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching departments:", error);
+          });
+        } else {
+          console.error("No token found in localStorage");
+        }
+      }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -38,6 +71,8 @@ const AddBudgetForm: React.FC<AddBudgetFormProps> = ({
         amount: budgetAmount,
         description,
         user: { id: userId },
+        department: { id: parseInt(selectedDepartmentId)},
+  
       });
 
       onBudgetAdded(response.data);
@@ -156,6 +191,19 @@ const AddBudgetForm: React.FC<AddBudgetFormProps> = ({
                 className="min-h-[100px] resize-none"
               />
             </div>
+
+            <Select value={selectedDepartmentId} onValueChange={(value) => setSelectedDepartmentId(value)}>
+              <SelectTrigger className="w-80 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
+                <SelectValue placeholder="Department" />
+              </SelectTrigger>
+              <SelectContent>
+                 {departments.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id.toString()}>
+                      {dept.name}
+                    </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </form>
         </CardContent>
 
@@ -173,7 +221,7 @@ const AddBudgetForm: React.FC<AddBudgetFormProps> = ({
             type="submit"
             className="flex-1 h-11 bg-[#5a57ff] hover:bg-[#4845ff]"
             onClick={handleSubmit}
-            disabled={isSubmitting || !budgetName.trim() || !budgetAmount.trim()}
+            disabled={isSubmitting || !budgetName.trim() || !budgetAmount.trim() || !selectedDepartmentId }
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
