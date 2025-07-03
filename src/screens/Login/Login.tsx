@@ -37,7 +37,12 @@ export const Login = ({ onLogin }: LoginProps): JSX.Element => {
       }));
 
       onLogin(true);
-      navigate("/");
+      if (email.endsWith("@admincomp.com")){
+        navigate("/adminDashboard");
+      } else {
+        navigate("/")
+      }
+      
     } catch (error) {
       console.error("Error:", error);
       alert("Login failed. Please check your credentials and try again.");

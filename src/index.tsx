@@ -13,6 +13,7 @@ import { Signup } from "./screens/Signup/Signup";
 import { ResetPassword } from "./screens/ResetPassword/ResetPassword";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import { PrivateRoute } from "./components/PrivateRoute";
+import { AdminDashboard } from "./screens/AdminDashboard/AdminDashboard";
 
 
 
@@ -33,6 +34,7 @@ function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Protected Routes */}
+        <Route path="/adminDashboard" element={<PrivateRoute isLoggedIn={isLoggedIn}><AdminDashboard /></PrivateRoute>} />
         <Route path="/" element={<PrivateRoute isLoggedIn={isLoggedIn}><Dashboard /></PrivateRoute>} />
         <Route path="/budgetAutomation" element={<PrivateRoute isLoggedIn={isLoggedIn}><BudgetAutomation /></PrivateRoute>} />
         <Route path="/dataAnalytics" element={<PrivateRoute isLoggedIn={isLoggedIn}><DataAnalytics /></PrivateRoute>} />
