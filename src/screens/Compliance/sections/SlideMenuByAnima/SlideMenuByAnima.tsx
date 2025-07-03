@@ -10,8 +10,11 @@ import { useNavigate } from "react-router-dom"; // make sure you are using react
 export const SlideMenuByAnima = (): JSX.Element => {
   const navigate = useNavigate();
 
+  const userEmail = JSON.parse(localStorage.getItem("user") || "{}").email;
+  const isAdmin = userEmail?.endsWith("@admincomp.com");
+
   const menuItems = [
-    { id: 1, path: "/", label: "Dashboard", icon:IoHome },
+    { id: 1, path: isAdmin ? "/adminDashboard" : "/", label: "Dashboard", icon:IoHome },
     { id: 2, path: "/budgetAutomation", label: "Budget Automation", multiline: true, icon:TbMoneybag},
     { id: 3, path: "/taxCalculations", label: "Tax Calculations", multiline: true, icon:FaMoneyCheckAlt },
     { id: 4, path: "/dataAnalytics", label: "Data Analytics", multiline: true, icon:BiBarChartAlt2 },

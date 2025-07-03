@@ -7,11 +7,11 @@ import { MdPayment, MdVerified } from "react-icons/md";
 import { TbMoneybag } from "react-icons/tb";
 import { useNavigate } from "react-router-dom"; // make sure you are using react-router
 
-export const SlideMenuByAnima = (): JSX.Element => {
+export const SlideMenuByAnimaAdmin = (): JSX.Element => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { id: 1, path: "/", label: "Dashboard", icon:IoHome },
+    { id: 1, path: "/adminDashboard", label: "Dashboard", icon:IoHome },
     { id: 2, path: "/budgetAutomation", label: "Budget Automation", multiline: true, icon:TbMoneybag},
     { id: 3, path: "/taxCalculations", label: "Tax Calculations", multiline: true, icon:FaMoneyCheckAlt },
     { id: 4, path: "/dataAnalytics", label: "Data Analytics", multiline: true, icon:BiBarChartAlt2 },

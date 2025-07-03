@@ -6,9 +6,14 @@ import { useNavigate } from "react-router-dom";
 
 export const Lougout = (): JSX.Element => {
 
+    const userEmail = JSON.parse(localStorage.getItem("user") || "{}").email;
     const navigate = useNavigate();
     const handleReturnToDashboard = () => {
-        navigate("/");
+      if (userEmail.endsWith("@admincomp.com")){
+        navigate("/adminDashboard");
+      } else {
+        navigate("/")
+      }
     }
 
     const handleReturnToLogin = () => {

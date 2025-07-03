@@ -1,1 +1,0 @@
-export { SlideMenuByAnima } from "./SlideMenuByAnima";

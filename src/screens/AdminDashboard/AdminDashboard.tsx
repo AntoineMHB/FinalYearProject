@@ -9,13 +9,14 @@ import { Card, CardContent } from "../../components/ui/card";
 import { Select, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
 import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
-import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
 import { TransactionsTableByAnima } from "./sections/TransactionsTableByAnima";
 import { SettingsLougOutSlideMenu } from "./sections/SettingsLougOutSlideMenu";
 import { Bell } from "lucide-react";
 import AddBudgetForm from "../../components/AddBudgetForm";
-import AddRevenueForm from "../../components/AddRevenueForm";
 import AddDepartmentForm from "../../components/AddDepartmentForm";
+// import { SlideMenuByAnimaAdmin } from "./sections/SlideMenuByAnimaAdmin";
+import { SlideMenuByAnimaAdmin } from "./sections/SlideMenuByAnimaAdmin";
+
 
 
 
@@ -95,7 +96,7 @@ export const AdminDashboard = (): JSX.Element => {
             </div>
             
             <div className="pt-[30px]">
-             <SlideMenuByAnima />
+             <SlideMenuByAnimaAdmin />
             </div>
 
             <div className="pt-[30px]">
