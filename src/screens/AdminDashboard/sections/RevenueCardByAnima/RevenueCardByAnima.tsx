@@ -1,12 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../../../../components/ui/card";
+import axios from "axios";
 
 export const RevenueCardByAnima = (): JSX.Element => {
+  
+  
+    const [budgetCount, setBudgetCount] = useState(0);
+    const [revenuesAmount, setRevenuesAmount] = useState(0);
+
+    useEffect(() => {
+      const fetchBudgetCount = async () => {
+        try {
+          const response = await axios.get("http://localhost:8080/api/budgets/count");
+          setBudgetCount(response.data);
+        } catch (error) {
+          console.error("Error fetching budget count:", error);
+        }
+      };
+      fetchBudgetCount();
+    }, []);
+
+    useEffect(() => {
+      const fetchRevenuesAmount = async () => {
+        try {
+          const response = await axios.get("http://localhost:8080/api/revenues/total-amount");
+          setRevenuesAmount(response.data);
+        } catch (error) {
+          console.error("Error fetching revenues amount:", error);
+        }
+      };
+      fetchRevenuesAmount();
+    }, []);
+  
   // Data for the cards to enable mapping
+
   const cardData = [
-    {
+  {
       title: "Total Budgets",
-      value: "12",
+      value: budgetCount,
       valueColor: "text-[#0e9cff]",
       actionText: "View Budgets",
       actionColor: "text-[#ea0505]",
@@ -14,7 +45,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
     },
     {
       title: "Revenue Overview",
-      value: "$1800",
+      value: `$ ${revenuesAmount}`,
       valueColor: "text-[#03ad3c]",
       actionText: "View Details",
       actionColor: "text-[#ea0505]",

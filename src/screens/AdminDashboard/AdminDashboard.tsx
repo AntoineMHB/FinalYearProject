@@ -16,6 +16,7 @@ import AddBudgetForm from "../../components/AddBudgetForm";
 import AddDepartmentForm from "../../components/AddDepartmentForm";
 // import { SlideMenuByAnimaAdmin } from "./sections/SlideMenuByAnimaAdmin";
 import { SlideMenuByAnimaAdmin } from "./sections/SlideMenuByAnimaAdmin";
+import axios from "axios";
 
 
 
@@ -50,6 +51,22 @@ export const AdminDashboard = (): JSX.Element => {
       setUser(JSON.parse(userData));
     }
   }, []);
+
+  const BudgetCount = () => {
+    const [budgetCount, setBudgetCount] = useState(0);
+
+    useEffect(() => {
+      const fetchBudgetCount = async () => {
+        try {
+          const response = await axios.get("http://localhost:8080/api/budgets/count");
+          setBudgetCount(response.data);
+        } catch (error) {
+          console.error("Error fetching budget count:", error);
+        }
+      };
+      fetchBudgetCount();
+    }, []);
+  }
 
   
     // Function to close the Add Budget form
