@@ -18,6 +18,7 @@ import {
 import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
 import { SettingsLougOutSlideMenu } from "../Dashboard/sections/SettingsLougOutSlideMenu";
+import axios from "axios";
 
 type User = {
   userId: number;
@@ -26,8 +27,17 @@ type User = {
   email: string;
 }
 
+interface Department {
+  id: number;
+  name: string;
+  user: {
+    id: number;
+  };
+}
+
 export const DataAnalytics = (): JSX.Element => {
       const [user, setUser] = useState<User | null>(null);
+      const [departments, setDepartments] = useState<Department[]>([]);
     
       useEffect(() => {
         const userData = localStorage.getItem("user");
@@ -35,6 +45,26 @@ export const DataAnalytics = (): JSX.Element => {
           setUser(JSON.parse(userData));
         }
       }, []);
+
+          useEffect(() => {
+            const token = localStorage.getItem("token");
+            
+            if (token) {
+              axios.get("http://localhost:8080/api/departments", {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              })
+              .then((response) => {
+                setDepartments(response.data);
+              })
+              .catch((error) => {
+                console.error("Error fetching departments:", error);
+              });
+            } else {
+              console.error("No token found in localStorage");
+            }
+          }, []);
   // Data for the financial metrics
   const financialMetrics = [
     {
@@ -117,6 +147,7 @@ export const DataAnalytics = (): JSX.Element => {
             </div>
           </div>
         </header>
+        
 
 
                 {/* Sidebar */}
@@ -140,7 +171,24 @@ export const DataAnalytics = (): JSX.Element => {
         <main className="ml-[280px] p-6">
           <div className="mt-[2px]">
             {/* Revenue Cards Section */}
+            <div>
+            <Select>
+                <SelectTrigger className="w-36 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
+                    <SelectValue placeholder="Department" />
+                      </SelectTrigger>
+                    <SelectContent>
+                        {departments.map((dept) => (
+                          <SelectItem key={dept.id} value={dept.id.toString()}>
+                            {dept.name}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+              </Select>
+          
+          </div>
             <RevenueCardByAnima />
+
+
 
             
              <div className="grid grid-cols-2 gap-4">

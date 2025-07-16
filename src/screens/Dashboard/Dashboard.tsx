@@ -6,7 +6,7 @@ import {
 } from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
-import { Select, SelectTrigger, SelectValue } from "../../components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
 import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
@@ -35,6 +35,14 @@ type User = {
   email: string;
 }
 
+interface Department {
+  id: number;
+  name: string;
+  user: {
+    id: number;
+  };
+}
+
 
 export const Dashboard = (): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
@@ -44,6 +52,8 @@ export const Dashboard = (): JSX.Element => {
   const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
   const [showAddRevenueForm, setShowAddRevenueForm] = useState(false);
   const [showAddExpenseForm, setShowAddExpenseForm] = useState(false);
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
+  const [departments, setDepartments] = useState<Department[]>([]);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -51,6 +61,26 @@ export const Dashboard = (): JSX.Element => {
       setUser(JSON.parse(userData));
     }
   }, []);
+
+        useEffect(() => {
+        const token = localStorage.getItem("token");
+        
+        if (token) {
+          axios.get("http://localhost:8080/api/departments", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((response) => {
+            setDepartments(response.data);
+          })
+          .catch((error) => {
+            console.error("Error fetching departments:", error);
+          });
+        } else {
+          console.error("No token found in localStorage");
+        }
+      }, []);
 
 
 
@@ -117,12 +147,14 @@ export const Dashboard = (): JSX.Element => {
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
+              
               <h1 className="font-extrabold text-[#353535] text-4xl [font-family:'Poppins',Helvetica]">
-                Dashboard
+                Manager Dashboard
               </h1>
               <p className="[font-family:'Poppins',Helvetica] font-medium text-[#cccccc] text-base">
                 Welcome&nbsp;&nbsp;back, {user? user.firstname : "Loading..."}
               </p>
+
             </div>
 
             {/* Notification and profile */}
@@ -151,6 +183,22 @@ export const Dashboard = (): JSX.Element => {
               </div>
             </div>
           </div>
+
+              <div className=" pb-[20px]">
+                <Select value={selectedDepartmentId} onValueChange={(value) => setSelectedDepartmentId(value)} >
+                  <SelectTrigger className="w-80 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
+                    <SelectValue placeholder="Select your Department"/>
+                  </SelectTrigger>
+                  <SelectContent>
+                     {departments.map((dept) => (
+                        <SelectItem key={dept.id} value={dept.id.toString()}>
+                          {dept.name}
+                        </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+              </div>
 
                 {/* Centered Modal */}
       {activeAction === "showAddBudget" && (
