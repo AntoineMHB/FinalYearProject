@@ -7,6 +7,8 @@ export const RevenueCardByAnima = (): JSX.Element => {
   
     const [budgetCount, setBudgetCount] = useState(0);
     const [revenuesAmount, setRevenuesAmount] = useState(0);
+    const [budgetsAmount, setBudgetsAmount] = useState(0);
+    const [expensesAmount, setExpensesAmount] = useState(0);
 
     useEffect(() => {
       const fetchBudgetCount = async () => {
@@ -31,6 +33,37 @@ export const RevenueCardByAnima = (): JSX.Element => {
       };
       fetchRevenuesAmount();
     }, []);
+
+    useEffect(() => {
+            const fetchBudgetsAmount = async () => {
+              try {
+                const response = await axios.get("http://localhost:8080/api/budgets/total-budget");
+                setBudgetsAmount(response.data);
+                console.log(response.data);
+              } catch (error) {
+                console.error("Error fetching budgets amount:", error);
+              }
+            };
+            fetchBudgetsAmount();
+          }, []);
+
+    useEffect(() => {
+            const fetchExpensesAmount = async () => {
+              try {
+                const response = await axios.get("http://localhost:8080/api/expenses/total-expense");
+                setExpensesAmount(response.data);
+                console.log(response.data);
+              } catch (error) {
+                console.error("Error fetching expenses amount:", error);
+              }
+            };
+            fetchExpensesAmount();
+    }, []);
+
+    const percentage = (expensesAmount / budgetsAmount) * 100;
+    const formatted = `${percentage.toFixed(1)}%`;
+ 
+
   
   // Data for the cards to enable mapping
 
@@ -69,7 +102,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
     },
     {
       title: "Budget Utilization",
-      value: "75%",
+      value:  formatted,
       valueColor: "text-black",
       actionText: "Analyse spending",
       actionColor: "text-[#ea0505]",

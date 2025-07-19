@@ -1,15 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../../../../components/ui/button";
 import { Card, CardContent, CardTitle } from "../../../../components/ui/card";
 import { Progress } from "../../../../components/ui/progress";
 import { Badge } from "../../../../components/ui/badge";
+import axios from "axios";
 
 export const RevenueCardByAnima = (): JSX.Element => {
+      const [budgetsAmount, setBudgetsAmount] = useState(0);
+
+          useEffect(() => {
+            const fetchBudgetsAmount = async () => {
+              try {
+                const response = await axios.get("http://localhost:8080/api/budgets/total-budget");
+                setBudgetsAmount(response.data);
+                console.log(response.data);
+              } catch (error) {
+                console.error("Error fetching budgets amount:", error);
+              }
+            };
+            fetchBudgetsAmount();
+          }, []);
   // Data for first three cards
   const cardData = [
     {
       title: "Total Budget Amount",
-      value: "$500,000",
+      value: `$ ${budgetsAmount}`,
       valueColor: "text-[#04AD3C]",
 
     },
