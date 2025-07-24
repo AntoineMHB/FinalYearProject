@@ -7,6 +7,7 @@ import axios from "axios";
 
 export const RevenueCardByAnima = (): JSX.Element => {
       const [budgetsAmount, setBudgetsAmount] = useState(0);
+      const [expensesAmount, setExpensesAmount] = useState(0);
 
           useEffect(() => {
             const fetchBudgetsAmount = async () => {
@@ -20,6 +21,22 @@ export const RevenueCardByAnima = (): JSX.Element => {
             };
             fetchBudgetsAmount();
           }, []);
+
+              useEffect(() => {
+                      const fetchExpensesAmount = async () => {
+                        try {
+                          const response = await axios.get("http://localhost:8080/api/expenses/total-expense");
+                          setExpensesAmount(response.data);
+                          console.log(response.data);
+                        } catch (error) {
+                          console.error("Error fetching expenses amount:", error);
+                        }
+                      };
+                      fetchExpensesAmount();
+              }, []);
+
+                const remainingBudget = budgetsAmount - expensesAmount;
+          
   // Data for first three cards
   const cardData = [
     {
@@ -30,13 +47,13 @@ export const RevenueCardByAnima = (): JSX.Element => {
     },
     {
       title: "Spent Budget",
-      value: "$320,00",
+      value: `$ ${expensesAmount}`,
       valueColor: "text-[#EB0606]",
 
     },
     {
       title: "Remaining Budget",
-      value: "$1800",
+      value: `$ ${remainingBudget}`,
       valueColor: "text-[#FF8B06]",
 
     },
