@@ -1,33 +1,66 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "../../../../components/ui/button";
 import { Card, CardContent } from "../../../../components/ui/card";
+import axios from "axios";
 
 export const RevenueCardByAnima = (): JSX.Element => {
+        const [revenuesAmount, setRevenuesAmount] = useState(0);
+        const [expensesAmount, setExpensesAmount] = useState(0);
+  
+            useEffect(() => {
+              const fetchRevenuesAmount = async () => {
+                try {
+                  const response = await axios.get("http://localhost:8080/api/revenues/total-amount");
+                  setRevenuesAmount(response.data);
+                  console.log(response.data);
+                } catch (error) {
+                  console.error("Error fetching revenues amount:", error);
+                }
+              };
+              fetchRevenuesAmount();
+            }, []);
+  
+                useEffect(() => {
+                        const fetchExpensesAmount = async () => {
+                          try {
+                            const response = await axios.get("http://localhost:8080/api/expenses/total-expense");
+                            setExpensesAmount(response.data);
+                            console.log(response.data);
+                          } catch (error) {
+                            console.error("Error fetching expenses amount:", error);
+                          }
+                        };
+                        fetchExpensesAmount();
+                }, []);
+
+                const netCashflow = revenuesAmount - expensesAmount;
+                
   // Data for the cards to enable mapping
+
   const topCards = [
     {
       id: 1,
       title: "Total Revenue",
-      value: "$500,000",
+      value: `$ ${revenuesAmount}`,
       valueColor: "text-[#04AD3C]",
     },
     {
       id: 2,
       title: "Total Expenses",
-      value: "$320,00",
+      value: `$ ${expensesAmount}`,
       valueColor: "text-[#EB0606]",
     },
     {
       id: 3,
-      title: "Net Profit/Loss",
-      value: "$1800",
-      valueColor: "text-[#FF8B06]",
+      title: netCashflow >= 0 ? "Net Profit" : "Net Loss",
+      value: `$ ${Math.abs(netCashflow)}`,
+      valueColor: netCashflow >= 0 ? "text-green-600" : "text-red-500",
     },
     {
       id: 4,
       title: "Cashflow Summary",
-      value: "$1800",
-      valueColor: "text-[#1706FF]",
+      value: `${netCashflow >= 0 ? "Positive" : "Negative"} Cashflow`,
+      valueColor: netCashflow >= 0 ? "text-[#FF8B06]" : "text-red-600",
 
     },
   ];
@@ -49,7 +82,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
                 </div>
 
                 <div
-                  className={`flex items-center justify-center mt-20 font-bold text-[35px] font-['Poppins',Helvetica] ${card.valueColor}`}
+                  className={`flex items-center justify-center mt-20 font-bold font-['Poppins',Helvetica] ${card.title === "Cashflow Summary" ? "text-[20px]" : "text-[35px]"} ${card.valueColor}`}
                 >
                   {card.value}
                 </div>
