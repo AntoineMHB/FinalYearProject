@@ -1,0 +1,1 @@
+export { TransactionsTableByAnimaAdmin } from "./TransactionsTableByAnimaAdmin";

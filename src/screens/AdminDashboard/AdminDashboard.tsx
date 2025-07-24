@@ -9,7 +9,7 @@ import { Card, CardContent } from "../../components/ui/card";
 import { Select, SelectTrigger, SelectValue } from "../../components/ui/select";
 import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
 import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
-import { TransactionsTableByAnima } from "./sections/TransactionsTableByAnima";
+import { TransactionsTableByAnimaAdmin } from "./sections/TransactionsTableByAnimaAdmin";
 import { SettingsLougOutSlideMenu } from "./sections/SettingsLougOutSlideMenu";
 import { Bell } from "lucide-react";
 import AddBudgetForm from "../../components/AddBudgetForm";
@@ -51,22 +51,6 @@ export const AdminDashboard = (): JSX.Element => {
       setUser(JSON.parse(userData));
     }
   }, []);
-
-  const BudgetCount = () => {
-    const [budgetCount, setBudgetCount] = useState(0);
-
-    useEffect(() => {
-      const fetchBudgetCount = async () => {
-        try {
-          const response = await axios.get("http://localhost:8080/api/budgets/count");
-          setBudgetCount(response.data);
-        } catch (error) {
-          console.error("Error fetching budget count:", error);
-        }
-      };
-      fetchBudgetCount();
-    }, []);
-  }
 
   
     // Function to close the Add Budget form
@@ -212,7 +196,7 @@ export const AdminDashboard = (): JSX.Element => {
                   Recent Transactions
                 </h2>
               </div>
-              <TransactionsTableByAnima />
+              <TransactionsTableByAnimaAdmin />
             </div>
 
             <div className="col-span-6">
