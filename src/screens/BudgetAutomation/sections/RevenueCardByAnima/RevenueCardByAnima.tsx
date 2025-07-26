@@ -57,6 +57,42 @@ export const RevenueCardByAnima = (): JSX.Element => {
                       fetchExpensesAmount();
               }, []);
 
+              // implementing a simple budget projection
+
+              // helper
+              function getWeekNumber(date:Date): number {
+                const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+                const pastDaysOfYear = Math.floor(
+                  (date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000)
+                );
+
+                const dayOfWeek = firstDayOfYear.getDay() || 7;
+                return Math.ceil((pastDaysOfYear + dayOfWeek) / 7);
+              }
+              
+              const pastBudgets = allBudgets.filter(b => {
+                const created = new Date(b.createdAt);
+                const fourWeeksAgo = new Date();
+                fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
+                return created >= fourWeeksAgo;
+              })
+
+              const weeklySums:any = {};
+
+              pastBudgets.forEach(b => {
+                const date = new Date(b.createdAt)
+                const week = `${date.getFullYear()}-W${getWeekNumber(date)}`;
+                weeklySums[week] = (weeklySums[week] || 0) +b.amount;
+              });
+
+              const weeklyAmounts: number[] = Object.values(weeklySums) as number[];
+              const average = weeklyAmounts.reduce((a, b) => a + b, 0) / weeklyAmounts.length;
+
+              const projectedBudget = average;
+              console.log(`The projected budget is ${projectedBudget}`)
+
+
+
               // calculating the weekly totals and % change based on allBudgets
               const [thisWeekTotal, setThisWeekTotal] = useState(0);
               const [lastWeekTotal, setLastWeekTotal] = useState(0);
@@ -151,7 +187,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
         <Card className="relative overflow-hidden border border-solid border-[#5a57ff1a] shadow-[0px_4px_4px_#00000040] w-[260px]">
           <CardTitle className="absolute top-6 left-6 w-full pr-6">
             <h3 className="font-medium text-base text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a] mb-[79px]">
-              Budget Projection
+              Budget Comparison
             </h3>
 
           </CardTitle>
@@ -175,40 +211,20 @@ export const RevenueCardByAnima = (): JSX.Element => {
 
               </Badge>
               <p className="text-xs text-gray-400 mt-1">compared to last week</p>
-
-
             </div>
 
+            <h3 className="pt-[20px] font-medium text-base text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a] mb-[2px]">
+              Projected Budget
+            </h3>
 
-            {/* <div className="space-y-4">
-              <h4 className="font-medium text-sm text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]">
-                Category Breakdown
-              </h4>
-
-              {categoryData.map((category, index) => (
-                <div key={index} className="flex items-center justify-between">
-                  <span className="font-medium text-sm text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]">
-                    {category.name}
-                  </span>
-                  <Progress
-                    value={category.percentage}
-                    className="w-[60%] h-1 bg-gray-700"
-                  />
-                  <span className="font-medium text-sm text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]">
-                    {category.percentage}%
-                  </span>
+            <div className="flex items-center justify-between space-x-1">
+                <div className="pt-[10px] font-bold text-black text-[35px] [font-family:'Poppins',Helvetica]">
+                   ${projectedBudget.toLocaleString()}
                 </div>
-              ))}
-            </div> */}
 
-            {/* <div className="absolute bottom-6 left-0">
-              <Button
-                variant="link"
-                className="font-semibold text-[11px] text-red font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]"
-              >
-                Review issues
-              </Button>
-            </div> */}
+                <p className="text-xs text-gray-400 mt-1">next week</p>
+
+            </div>
           </CardContent>
         </Card>
       </div>
