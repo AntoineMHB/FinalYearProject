@@ -61,7 +61,8 @@ export const TransactionsTableByAnimaAdmin = (): JSX.Element => {
   return (
     <Card className="w-full rounded-xl border border-solid border-[#0000006e] overflow-hidden">
       <CardContent className="p-0">
-        <Table>
+        <div className="h-[238px] overflow-y-auto">
+          <Table>
           <TableHeader>
             <TableRow className="bg-[#d9d9d9]">
               <TableHead className="px-6 py-3 font-medium text-black text-sm">Date</TableHead>
@@ -91,6 +92,8 @@ export const TransactionsTableByAnimaAdmin = (): JSX.Element => {
             ))}
           </TableBody>
         </Table>
+
+        </div>
       </CardContent>
     </Card>
   );

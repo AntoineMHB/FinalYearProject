@@ -9,6 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { Card, CardContent, CardTitle } from "../../../../components/ui/card";
@@ -20,7 +21,8 @@ ChartJS.register(
   LinearScale,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  Filler
 );
 
 interface Expense {
