@@ -19,6 +19,8 @@ import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
 import { SettingsLougOutSlideMenu } from "../Dashboard/sections/SettingsLougOutSlideMenu";
 import axios from "axios";
+import ProfitAndLossStatement from "./sections/ProfitAndLossStatement/ProfitAndLossStatement";
+import ExpenseBreakdown from "./sections/ExpenseBreakdown/ExpenseBreakdown";
 
 type User = {
   userId: number;
@@ -224,24 +226,7 @@ export const DataAnalytics = (): JSX.Element => {
               <div className="flex flex-wrap gap-1 mt-2">
               
               {/* Expense Breakdown */}
-              <Card className="w-[507px] h-[206px] border border-solid border-[#5a57ff1a] rounded-3xl shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="font-['Poppins',Helvetica] font-medium text-[#b0b0b4] text-base">
-                    Expense Breakdown
-                  </h3>
-                  <div className="flex items-end justify-between h-[122px] mt-4">
-                    {chartBars.map((bar, index) => (
-                      <div key={index} className="relative w-8 h-[120px]">
-                        <div className="absolute w-[31px] h-[120px] top-0 left-px bg-[#faf9ff] rounded-[34px] border border-solid border-[#5a57ff1a]" />
-                        <div
-                          className="absolute w-8 rounded-[34px] border border-solid border-[#5a57ff1a] [background:linear-gradient(180deg,rgba(245,245,245,0.23)_14%,rgba(0,0,0,0)_100%),linear-gradient(0deg,rgba(87,255,196,0.9)_0%,rgba(87,255,196,0.9)_100%)]"
-                          style={{ height: bar.height, top: bar.top }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <ExpenseBreakdown />
 
 
                           {/* Profit and Loss Statement */}
@@ -250,7 +235,7 @@ export const DataAnalytics = (): JSX.Element => {
                   <h3 className="font-['Poppins',Helvetica] font-medium text-[#b0b0b4] text-base">
                     Profit and Loss Statement
                   </h3>
-                {/* Statement content would go here */}
+                <ProfitAndLossStatement />
                 </CardContent>
               </Card>
 

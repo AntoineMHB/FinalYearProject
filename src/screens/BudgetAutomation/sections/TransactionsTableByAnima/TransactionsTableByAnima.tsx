@@ -51,7 +51,7 @@ export const TransactionsTableByAnima = (): JSX.Element => {
             </TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+          <TableBody>
           {departmentData.map((row, index) => (
             <TableRow
               key={index}
@@ -60,13 +60,13 @@ export const TransactionsTableByAnima = (): JSX.Element => {
               <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#818181] text-sm">
                 {row.department}
               </TableCell>
-              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#04AD3C] text-sm">
+              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-bold text-[#04AD3C] text-sm">
                 ${row.allocated.toLocaleString()}
               </TableCell>
-              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#EB0606] text-sm">
+              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-bold text-[#EB0606] text-sm">
                 ${row.spent.toLocaleString()}
               </TableCell>
-              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#FF8B06] text-sm">
+              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-bold text-[#FF8B06] text-sm">
                 ${row.remaining.toLocaleString()}
               </TableCell>
             </TableRow>
