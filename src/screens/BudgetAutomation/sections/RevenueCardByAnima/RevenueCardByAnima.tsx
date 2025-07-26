@@ -4,11 +4,31 @@ import { Card, CardContent, CardTitle } from "../../../../components/ui/card";
 import { Progress } from "../../../../components/ui/progress";
 import { Badge } from "../../../../components/ui/badge";
 import axios from "axios";
+import { startOfWeek, subWeeks, isWithinInterval, parseISO } from "date-fns";
+
+
+
 
 export const RevenueCardByAnima = (): JSX.Element => {
       const [budgetsAmount, setBudgetsAmount] = useState(0);
       const [expensesAmount, setExpensesAmount] = useState(0);
+      const [allBudgets, setAllBudgets] = useState<any[]>([]);
 
+      // fetching all budgets for weekly calculation
+      useEffect(() => {
+        const fetchAllBudgets = async () => {
+          try {
+              const response = await axios.get("http://localhost:8080/api/budgets");
+              setAllBudgets(response.data);
+          } catch (error) {
+            console.error("Error fetching all budgets:", error);
+          }
+        };
+        fetchAllBudgets();
+      }, []);
+
+          
+      // fetching the total amount of budgets
           useEffect(() => {
             const fetchBudgetsAmount = async () => {
               try {
@@ -22,6 +42,8 @@ export const RevenueCardByAnima = (): JSX.Element => {
             fetchBudgetsAmount();
           }, []);
 
+
+            // fetching the total amount of expenses
               useEffect(() => {
                       const fetchExpensesAmount = async () => {
                         try {
@@ -35,6 +57,41 @@ export const RevenueCardByAnima = (): JSX.Element => {
                       fetchExpensesAmount();
               }, []);
 
+              // calculating the weekly totals and % change based on allBudgets
+              const [thisWeekTotal, setThisWeekTotal] = useState(0);
+              const [lastWeekTotal, setLastWeekTotal] = useState(0);
+              const [weeklyChange, setWeeklyChange] = useState<number | string>(0);
+
+              useEffect(() => {
+                if (allBudgets.length === 0) return;
+
+                const now = new Date();
+                const thisWeekStart = startOfWeek(now, { weekStartsOn: 1});
+                const lastWeekStart = subWeeks(thisWeekStart, 1);
+
+                const thisWeekBudgets = allBudgets.filter((b) =>
+                  b.createdAt && isWithinInterval(parseISO(b.createdAt), {start: thisWeekStart, end: now})
+              );
+
+              const lastWeekBudgets = allBudgets.filter((b) =>
+                b.createdAt && isWithinInterval(parseISO(b.createdAt), { start: lastWeekStart, end: thisWeekStart })
+            );
+
+            const thisSum = thisWeekBudgets.reduce((sum, b) => sum + b.amount, 0);
+            const lastSum = lastWeekBudgets.reduce((sum, b) => sum + b.amount, 0);
+
+            setThisWeekTotal(thisSum);
+            setLastWeekTotal(lastSum);
+
+            if (lastSum === 0) {
+              setWeeklyChange(thisSum === 0 ? 0 : "New");
+            } else {
+              const percentChange = (((thisSum - lastSum) / lastSum) * 100).toFixed(1);
+              setWeeklyChange(percentChange);
+            }
+              }, [allBudgets]);
+
+              // calculating the remaining budget amount
                 const remainingBudget = budgetsAmount - expensesAmount;
           
   // Data for first three cards
@@ -102,17 +159,28 @@ export const RevenueCardByAnima = (): JSX.Element => {
             
             <div className="flex items-center justify-between space-x-1">
               <div className="pt-[-20px] font-bold text-black text-[35px] [font-family:'Poppins',Helvetica]">
-                $700,000
-               </div>
+                ${thisWeekTotal.toLocaleString()}
+              </div>
 
-              <Badge className="bg-emerald-100 text-green-600 rounded-[20px] px-4 py-1">
-                25.0%
+              <Badge
+                className={`rounded-[20ox] px-4 py-1 ${
+                  weeklyChange === "New"
+                    ? "bg-blue-100 text-blue-600"
+                    : Number(weeklyChange) >= 0
+                    ? "bg-emerald-100 text-green-600"
+                    : "bg-red-100 text-red-600"
+                }`}
+              >
+                {weeklyChange === "New" ? "New" : `${weeklyChange}%`}
+
               </Badge>
+              <p className="text-xs text-gray-400 mt-1">compared to last week</p>
+
 
             </div>
 
 
-            <div className="space-y-4">
+            {/* <div className="space-y-4">
               <h4 className="font-medium text-sm text-[#b0b0b4] font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]">
                 Category Breakdown
               </h4>
@@ -131,19 +199,21 @@ export const RevenueCardByAnima = (): JSX.Element => {
                   </span>
                 </div>
               ))}
-            </div>
+            </div> */}
 
-            <div className="absolute bottom-6 left-0">
+            {/* <div className="absolute bottom-6 left-0">
               <Button
                 variant="link"
-                className="font-semibold text-[11px] text-white font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]"
+                className="font-semibold text-[11px] text-red font-['Poppins',Helvetica] [-webkit-text-stroke:1px_#d1fae51a]"
               >
                 Review issues
               </Button>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>
     </section>
   );
 };
+
+
