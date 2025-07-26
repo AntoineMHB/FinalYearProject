@@ -7,7 +7,6 @@ import {
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
 import { Select, SelectTrigger, SelectValue } from "../../components/ui/select";
-import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
 import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { TransactionsTableByAnimaAdmin } from "./sections/TransactionsTableByAnimaAdmin";
 import { SettingsLougOutSlideMenu } from "./sections/SettingsLougOutSlideMenu";
@@ -17,6 +16,9 @@ import AddDepartmentForm from "../../components/AddDepartmentForm";
 // import { SlideMenuByAnimaAdmin } from "./sections/SlideMenuByAnimaAdmin";
 import { SlideMenuByAnimaAdmin } from "./sections/SlideMenuByAnimaAdmin";
 import axios from "axios";
+import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
+
+
 
 
 
