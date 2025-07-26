@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card } from "../../../../components/ui/card";
 import {
   Table,
@@ -8,43 +8,29 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
+import axios from "axios";
+
+type DepartmentSummary = {
+  department: string;
+  allocated: number;
+  spent: number;
+  remaining: number;
+};
 
 export const TransactionsTableByAnima = (): JSX.Element => {
+    const [departmentData, setDepartmentData] = useState<DepartmentSummary[]>([]);
   // Table data for departments
-  const departmentData = [
-    {
-      department: "IT",
-      allocated: "$500,000",
-      spent: "$200,000",
-      remaining: "$300,000",
-      status: "Completed",
-      statusColor: "text-[#62cd81]",
-    },
-    {
-      department: "Marketing",
-      allocated: "$600,000",
-      spent: "$300,000",
-      remaining: "$300,000",
-      status: "Canceled",
-      statusColor: "text-[#ea0505]",
-    },
-    {
-      department: "HR",
-      allocated: "$900,000",
-      spent: "$900,000",
-      remaining: "$0",
-      status: "Pending",
-      statusColor: "text-[#b0b0b4]",
-    },
-    {
-      department: "Security",
-      allocated: "$400,000",
-      spent: "$300,000",
-      remaining: "$100,000",
-      status: "Completed",
-      statusColor: "text-[#62cd81]",
-    },
-  ];
+
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/departments/budget-summary")
+      .then((response) => {
+        setDepartmentData(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching department summary:", error);
+      });
+  }, []);
+  
 
   return (
     <Card className="w-full rounded-xl overflow-hidden border border-solid border-[#0000006e]">
@@ -63,9 +49,6 @@ export const TransactionsTableByAnima = (): JSX.Element => {
             <TableHead className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-black text-sm">
               Remaining
             </TableHead>
-            <TableHead className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-black text-sm">
-              Status
-            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -77,19 +60,14 @@ export const TransactionsTableByAnima = (): JSX.Element => {
               <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#818181] text-sm">
                 {row.department}
               </TableCell>
-              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#818181] text-sm">
-                {row.allocated}
+              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#04AD3C] text-sm">
+                ${row.allocated.toLocaleString()}
               </TableCell>
-              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#818181] text-sm">
-                {row.spent}
+              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#EB0606] text-sm">
+                ${row.spent.toLocaleString()}
               </TableCell>
-              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#818181] text-sm">
-                {row.remaining}
-              </TableCell>
-              <TableCell
-                className={`px-6 py-3 [font-family:'Poppins',Helvetica] font-medium ${row.statusColor} text-sm`}
-              >
-                {row.status}
+              <TableCell className="px-6 py-3 [font-family:'Poppins',Helvetica] font-medium text-[#FF8B06] text-sm">
+                ${row.remaining.toLocaleString()}
               </TableCell>
             </TableRow>
           ))}
