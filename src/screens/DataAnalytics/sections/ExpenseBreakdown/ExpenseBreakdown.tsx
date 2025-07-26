@@ -56,6 +56,12 @@ export default function ExpenseBreakdown() {
           {chartBars.map((bar, index) => (
             <div key={index} className="relative w-10 h-full text-center">
               <div className="absolute w-[31px] h-full top-0 left-px bg-[#faf9ff] rounded-[34px] border border-solid border-[#5a57ff1a]" />
+
+              {/* Custom Tooltip */}
+              <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                ${expenseData[index].amount.toFixed(2)}
+              </div>
+
               <div
                 className="absolute w-8 rounded-[34px]"
                 style={{ 
@@ -63,6 +69,7 @@ export default function ExpenseBreakdown() {
                     top: bar.top,
                     backgroundColor: "#EB0606"
                  }}
+                 title={`$${expenseData[index].amount.toFixed(2)}`}
               />
               <div className="absolute -bottom-5 w-full text-[10px] text-gray-500 truncate">
                 {bar.date.slice(5)} {/* shows MM-DD */}

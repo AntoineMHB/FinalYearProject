@@ -21,6 +21,7 @@ import { SettingsLougOutSlideMenu } from "../Dashboard/sections/SettingsLougOutS
 import axios from "axios";
 import ProfitAndLossStatement from "./sections/ProfitAndLossStatement/ProfitAndLossStatement";
 import ExpenseBreakdown from "./sections/ExpenseBreakdown/ExpenseBreakdown";
+import { NbchartsLinechatsByAnima } from "../AdminDashboard/sections/NbchartsLinechatsByAnima";
 
 type User = {
   userId: number;
@@ -202,7 +203,7 @@ export const DataAnalytics = (): JSX.Element => {
                     <h3 className="font-['Poppins',Helvetica] font-medium text-[#b0b0b4] text-base">
                       Revenue &amp; Expense Trends
                     </h3>
-                  {/* Chart content would go here */}
+                 <NbchartsLinechatsByAnima />
                   </CardContent>
                 </Card>
 
