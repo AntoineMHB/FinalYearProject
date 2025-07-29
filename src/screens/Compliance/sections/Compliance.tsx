@@ -8,6 +8,7 @@ import { Card } from "../../../components/ui/card";
 import { TransactionsTableByAnima } from "./TransactionsTableByAnima";
 import { Button } from "../../../components/ui/button";
 import { SettingsLougOutSlideMenu } from "../../Dashboard/sections/SettingsLougOutSlideMenu";
+import { AuditTrailTable } from "../AuditTrailTable/AuditTrailTable";
 
 type User = {
   userId: number;
@@ -157,7 +158,9 @@ export const Compliance = (): JSX.Element => {
             </div>
 
             {/* Transactions Table */}
-            <TransactionsTableByAnima />
+            {/* <TransactionsTableByAnima /> */}
+
+            <AuditTrailTable />
           </div>
 
           {/* Action Buttons */}
