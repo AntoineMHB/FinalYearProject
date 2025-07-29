@@ -64,6 +64,7 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const userId = userData.userId;
+      const token = localStorage.getItem("token");
 
       if (!userId) {
         throw new Error("User ID not found. Please log in.");
@@ -75,6 +76,10 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
         description,
         user: { id: userId },
         budget: { id: selectedBudgetId },
+      }, {
+        headers:{
+          Authorization: `Bearer ${token}`
+        }
       });
 
       onExpenseAdded(response.data);

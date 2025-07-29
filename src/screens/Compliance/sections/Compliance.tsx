@@ -162,23 +162,6 @@ export const Compliance = (): JSX.Element => {
 
             <AuditTrailTable />
           </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-4 mt-8">
-            <Button className="flex-1 h-[54px]  bg-[#5A57FF] hover:bg-[#3787ff] text-white font-bold text-xs [font-family:'Poppins',Helvetica] rounded-[20px] shadow-lg">
-              <DownloadIcon className="mr-4 w-[38px] h-[38px]" />
-              Download Reports
-            </Button>
-
-            <Button className="flex-1 h-[54px] bg-white hover:bg-[#e6f0ff] text-[#5a57ff] font-bold text-xs [font-family:'Poppins',Helvetica] rounded-[20px] shadow-lg">
-              <img
-                className="mr-4 w-[24px] h-[24px]"
-                alt="Lab profile"
-                src="https://c.animaapp.com/mat0sth7aPU5zJ/img/lab-profile.png"
-              />
-              Generate Reports
-            </Button>
-          </div>
         </div>
       </div>
     </div>

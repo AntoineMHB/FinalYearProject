@@ -61,6 +61,7 @@ const AddBudgetForm: React.FC<AddBudgetFormProps> = ({
     try {
       const userData = JSON.parse(localStorage.getItem("user") || "{}");
       const userId = userData.userId;
+      const token = localStorage.getItem("token");
 
       if (!userId) {
         throw new Error("User ID not found. Please log in.");
@@ -72,7 +73,10 @@ const AddBudgetForm: React.FC<AddBudgetFormProps> = ({
         description,
         user: { id: userId },
         department: { id: parseInt(selectedDepartmentId)},
-  
+      }, {
+        headers:{
+          Authorization: `Bearer ${token}`
+        }
       });
 
       onBudgetAdded(response.data);

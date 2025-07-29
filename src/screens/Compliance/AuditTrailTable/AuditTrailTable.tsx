@@ -1,6 +1,9 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../../../components/ui/table";
+import Papa from "papaparse";
+import { Button } from "../../../components/ui/button";
+import { DownloadIcon } from "lucide-react";
 
 type AuditLog = {
   timestamp: string;     // or Date if you're parsing it
@@ -26,7 +29,30 @@ export const AuditTrailTable = (): JSX.Element => {
     fetchLogs();
   }, []);
 
+   const downloadCSV = () => {
+    const csv = Papa.unparse(logs);
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "audit_logs.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+   };
+
     return (
+     <div className="w-full">
+      <div className="flex justify-end mb-4">
+        <Button
+          onClick={downloadCSV}
+          className=" bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 shadow"
+        >
+          <DownloadIcon className="mr-4 w-[38px] h-[38px]" />
+          Download CSV
+        </Button>
+      </div>
     <div className="w-full rounded-xl overflow-hidden border border-solid border-[#0000006e]">
       <Table>
         <TableHeader className="bg-[#d9d9d9]">
@@ -50,6 +76,7 @@ export const AuditTrailTable = (): JSX.Element => {
           ))}
         </TableBody>
       </Table>
+    </div>
     </div>
   );
 };
