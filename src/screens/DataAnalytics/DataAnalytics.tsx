@@ -1,5 +1,5 @@
-import { Bell, BellIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { Bell, BellIcon, Download } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Avatar,
   AvatarFallback,
@@ -23,6 +23,7 @@ import ProfitAndLossStatement from "./sections/ProfitAndLossStatement/ProfitAndL
 import ExpenseBreakdown from "./sections/ExpenseBreakdown/ExpenseBreakdown";
 import { NbchartsLinechatsByAnima } from "../AdminDashboard/sections/NbchartsLinechatsByAnima";
 import { Link, useNavigate } from "react-router-dom";
+import html2pdf from "html2pdf.js";
 
 type User = {
   userId: number;
@@ -43,6 +44,7 @@ interface Department {
 export const DataAnalytics = (): JSX.Element => {
       const [user, setUser] = useState<User | null>(null);
       const [departments, setDepartments] = useState<Department[]>([]);
+      const reportRef = useRef<HTMLDivElement>(null);
 
       const navigate = useNavigate();
 
@@ -108,6 +110,19 @@ export const DataAnalytics = (): JSX.Element => {
     { height: "71px", top: "49px" },
     { height: "105px", top: "15px" },
   ];
+
+    const downloadPDF = () => {
+    if (reportRef.current) {
+      const opt = {
+        margin: 0.5,
+        filename: "financial_report.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
+      };
+      html2pdf().from(reportRef.current).set(opt).save();
+    }
+  };
 
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full min-h-screen">
@@ -220,34 +235,13 @@ export const DataAnalytics = (): JSX.Element => {
 
                           {/* Action Buttons */}
                 <div className="flex-wrap gap-4 mt-[-12px] mb-[10px]">
-                  <Button className="w-[504px] h-[54px] bg-white text-[#5a57ff] hover:bg-gray-100 rounded-[20px] shadow-lg">
-                    <span className="font-['Poppins',Helvetica] font-bold text-xl">
-                      Generate Reports
-                    </span>
-                  </Button>
-                  {/* <Button className="mt-4"> */}
-                    <Link 
+                  <Link 
                       to={"/downloadReport"}
                       className="mt-4 inline-flex items-center justify-center w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg text-xl font-bold font-['Poppins',Helvetica]"
                     >
-                        Download Reports
+                        Generate Reports
                     </Link>
-
-                  {/* </Button> */}
-                  {/* <Button>
-                    <Link 
-                      to={"/downloadReport"}
-                      className="mt-4 w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg">
-                      <span className="font-['Poppins',Helvetica] font-bold text-xl">
-                        Download Reports
-                      </span>
-                    </Link>
-
-                  </Button> */}
-
                 </div>
-                
-
               </div>
 
               <div className="flex flex-wrap gap-1 mt-2">
