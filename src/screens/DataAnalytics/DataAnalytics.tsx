@@ -22,6 +22,7 @@ import axios from "axios";
 import ProfitAndLossStatement from "./sections/ProfitAndLossStatement/ProfitAndLossStatement";
 import ExpenseBreakdown from "./sections/ExpenseBreakdown/ExpenseBreakdown";
 import { NbchartsLinechatsByAnima } from "../AdminDashboard/sections/NbchartsLinechatsByAnima";
+import { useNavigate } from "react-router-dom";
 
 type User = {
   userId: number;
@@ -38,9 +39,19 @@ interface Department {
   };
 }
 
+
 export const DataAnalytics = (): JSX.Element => {
       const [user, setUser] = useState<User | null>(null);
       const [departments, setDepartments] = useState<Department[]>([]);
+
+      const navigate = useNavigate();
+
+     function handleClickDownloadButton() {
+      console.log("User is logged in:", user);
+      console.log("Navigating to /downloadReport");
+       navigate("/downloadReport")
+  
+     };
     
       useEffect(() => {
         const userData = localStorage.getItem("user");
@@ -214,7 +225,7 @@ export const DataAnalytics = (): JSX.Element => {
                       Generate Reports
                     </span>
                   </Button>
-                  <Button className="mt-4 w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg">
+                  <Button onClick={handleClickDownloadButton} className="mt-4 w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg">
                     <span className="font-['Poppins',Helvetica] font-bold text-xl">
                       Download Reports
                     </span>

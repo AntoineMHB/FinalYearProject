@@ -14,6 +14,7 @@ import { ResetPassword } from "./screens/ResetPassword/ResetPassword";
 import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { AdminDashboard } from "./screens/AdminDashboard/AdminDashboard";
+import { FinancialReport } from "./screens/AdminDashboard/sections/FinancialReport/FinancialReport";
 
 
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/signupPage" element={<Signup />} />
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/downloadReport" element={<FinancialReport />} />
 
         {/* Protected Routes */}
         <Route path="/adminDashboard" element={<PrivateRoute isLoggedIn={isLoggedIn}><AdminDashboard /></PrivateRoute>} />
@@ -41,6 +43,7 @@ function App() {
         <Route path="/compliance" element={<PrivateRoute isLoggedIn={isLoggedIn}><Compliance /></PrivateRoute>} />
         <Route path="/settings" element={<PrivateRoute isLoggedIn={isLoggedIn}><Settings /></PrivateRoute>} />
         <Route path="/logout" element={<PrivateRoute isLoggedIn={isLoggedIn}><Lougout /></PrivateRoute>} />
+        {/* <Route path="/downloadReport" element={<PrivateRoute isLoggedIn={isLoggedIn}><FinancialReport /></PrivateRoute>} /> */}
 
         {/* Catch-all route */}
         <Route path="*" element={<Navigate to={isLoggedIn ? "/" : "/login"} />} />
