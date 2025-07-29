@@ -216,20 +216,26 @@ export const FinancialReport = () => {
   };
 
   // Sample data for demonstration - replace with your actual data
+  const now = new Date();
+
+  const year = now.getFullYear();
+  const month = now.toLocaleString('en-US', { month: 'long'});
+  const monthNumber = String(now.getMonth() + 1).padStart(2, '0');
+
   const reportData = {
     header: {
       title: "Monthly Financial Report",
       businessName: "LIKUTA Track",
-      period: "July 2025",
+      period: `${month} ${year}`,
       generatedDate: new Date().toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       }),
-      reportId: "FR-2025-07-001"
+      reportId: `FR-${year}-${monthNumber}-001`
     },
     budget: {
-      name: "Q3 2025 Budget",
+      name: "2025 Budget",
       allocated: budgetsAmount,
       spent: expensesAmount,
       remaining: budgetsAmount - expensesAmount,
@@ -280,11 +286,9 @@ export const FinancialReport = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header with Logo and Download Button */}
         <div className="flex justify-between items-center mb-8">
-          <img
-            src="/assets/LIKUTA_Track.png"
-            alt="LIKUTA Track"
-            className="w-24 h-24"
-          />
+          <h1
+            className=" text-blue-600 font-bold"
+          >LIKUTA Track</h1>
           <button
             onClick={downloadPDF}
             className="flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"

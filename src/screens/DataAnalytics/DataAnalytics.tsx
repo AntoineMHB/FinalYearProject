@@ -22,7 +22,7 @@ import axios from "axios";
 import ProfitAndLossStatement from "./sections/ProfitAndLossStatement/ProfitAndLossStatement";
 import ExpenseBreakdown from "./sections/ExpenseBreakdown/ExpenseBreakdown";
 import { NbchartsLinechatsByAnima } from "../AdminDashboard/sections/NbchartsLinechatsByAnima";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 type User = {
   userId: number;
@@ -225,11 +225,26 @@ export const DataAnalytics = (): JSX.Element => {
                       Generate Reports
                     </span>
                   </Button>
-                  <Button onClick={handleClickDownloadButton} className="mt-4 w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg">
-                    <span className="font-['Poppins',Helvetica] font-bold text-xl">
-                      Download Reports
-                    </span>
-                  </Button>
+                  {/* <Button className="mt-4"> */}
+                    <Link 
+                      to={"/downloadReport"}
+                      className="mt-4 inline-flex items-center justify-center w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg text-xl font-bold font-['Poppins',Helvetica]"
+                    >
+                        Download Reports
+                    </Link>
+
+                  {/* </Button> */}
+                  {/* <Button>
+                    <Link 
+                      to={"/downloadReport"}
+                      className="mt-4 w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg">
+                      <span className="font-['Poppins',Helvetica] font-bold text-xl">
+                        Download Reports
+                      </span>
+                    </Link>
+
+                  </Button> */}
+
                 </div>
                 
 
