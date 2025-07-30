@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Calculator, FileText, DollarSign, Percent, Building, User } from 'lucide-react';
 import Header from '../../lib/Compenents/Header';
 import { SlideMenuByAnima } from '../DataAnalytics/sections/SlideMenuByAnima';
 import { SettingsLougOutSlideMenu } from '../Dashboard/sections/SettingsLougOutSlideMenu';
+import axios from 'axios';
 
 interface TaxResult {
   taxAmount: number;
@@ -13,10 +14,35 @@ interface TaxResult {
 
 const TaxCalculator: React.FC = () => {
   const [activeTab, setActiveTab] = useState('income');
+  const [expensesAmount, setExpensesAmount] = useState(0);
+  const [revenuesAmount, setRevenuesAmount] = useState(0);
+
+   // Fetching the total expenses and the total revenues
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const [expensesResponse, revenuesResponse] = await Promise.all([
+            axios.get("http://localhost:8080/api/expenses/total-expense"),
+            axios.get("http://localhost:8080/api/revenues/total-amount"),
+          ]);
+          setExpensesAmount(expensesResponse.data);
+          setRevenuesAmount(revenuesResponse.data);
+          console.log("Expenses:", expensesResponse.data);
+          console.log("Revenues:", revenuesResponse.data);
+        } catch (error) {
+          console.error("Error fetching expenses amount:", error);
+        }
+      };
+      fetchData();
+    }, []);
+
+    // here we calculate the net profit
+    const netProfit = revenuesAmount - expensesAmount;
   
   // Income Tax State
-  const [income, setIncome] = useState<string>('');
+  let [income, setIncome] = useState<string>('');
   const [incomeResult, setIncomeResult] = useState<TaxResult | null>(null);
+  income = netProfit.toString();
   
   // VAT State
   const [vatAmount, setVatAmount] = useState<string>('');
@@ -31,7 +57,8 @@ const TaxCalculator: React.FC = () => {
   const [whtResult, setWhtResult] = useState<TaxResult | null>(null);
   
   // Turnover Tax State
-  const [turnover, setTurnover] = useState<string>('');
+  let [turnover, setTurnover] = useState<string>('');
+  turnover = revenuesAmount.toString();
   const [turnoverResult, setTurnoverResult] = useState<TaxResult | null>(null);
 
   // Income Tax Calculation (Progressive rates)
@@ -221,7 +248,7 @@ const TaxCalculator: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    value={income}
+                    value={netProfit}
                     onChange={(e) => setIncome(e.target.value)}
                     placeholder="Enter your annual income"
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#5A57FF] focus:outline-none transition-all"
@@ -548,6 +575,12 @@ const TaxCalculator: React.FC = () => {
       </div>
     </div>
   );
+
+  // export default function TurnoverResult() {
+  //   return (
+
+  //   )
+  // }
 };
 
 export default TaxCalculator;

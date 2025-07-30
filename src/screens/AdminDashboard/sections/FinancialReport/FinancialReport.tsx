@@ -58,7 +58,7 @@ export const FinancialReport = () => {
   const reportRef = useRef<HTMLDivElement>(null);
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
-  const [netProfit, setNetProfit] = useState(0);
+  let [netProfit, setNetProfit] = useState(0);
   const [expenseReport, setExpenseReport] = useState<any[]>([]);
   const [budgetData, setBudgetData] = useState<any[]>([]);
   const [totalExpense, setTotalExpense] = useState(0);
@@ -142,6 +142,7 @@ export const FinancialReport = () => {
 
   const percentage = (expensesAmount / budgetsAmount) * 100;
     const formatted = `${percentage.toFixed(1)}%`;
+   netProfit = revenuesAmount - expensesAmount;
 
   useEffect(() => {
     axios.get("/api/cashflow/summary").then((res) => {
@@ -221,6 +222,91 @@ export const FinancialReport = () => {
   const year = now.getFullYear();
   const month = now.toLocaleString('en-US', { month: 'long'});
   const monthNumber = String(now.getMonth() + 1).padStart(2, '0');
+
+  interface TaxResult {
+  taxAmount: number;
+  afterTaxAmount: number;
+  effectiveRate: number;
+  breakdown?: { bracket: string; rate: number; amount: number }[];
+}
+
+    // Income Tax State
+    let [income, setIncome] = useState<string>('');
+    const [incomeResult, setIncomeResult] = useState<TaxResult | null>(null);
+    income = netProfit.toString();
+
+    // Income Tax Calculation (Progressive rates)
+  const calculateIncomeTax = () => {
+    const incomeValue = parseFloat(income);
+    if (isNaN(incomeValue) || incomeValue <= 0) return;
+
+    // Sample progressive tax brackets
+    const brackets = [
+      { min: 0, max: 50000, rate: 0 },
+      { min: 50001, max: 100000, rate: 10 },
+      { min: 100001, max: 200000, rate: 20 },
+      { min: 200001, max: 500000, rate: 25 },
+      { min: 500001, max: Infinity, rate: 30 }
+    ];
+
+    let totalTax = 0;
+    const breakdown: { bracket: string; rate: number; amount: number }[] = [];
+
+    for (const bracket of brackets) {
+      if (incomeValue > bracket.min) {
+        const taxableInThisBracket = Math.min(incomeValue, bracket.max) - bracket.min + 1;
+        const taxForThisBracket = (taxableInThisBracket * bracket.rate) / 100;
+        totalTax += taxForThisBracket;
+        
+        if (taxForThisBracket > 0) {
+          breakdown.push({
+            bracket: bracket.max === Infinity 
+              ? `$${bracket.min.toLocaleString()}+` 
+              : `$${bracket.min.toLocaleString()} - $${bracket.max.toLocaleString()}`,
+            rate: bracket.rate,
+            amount: taxForThisBracket
+          });
+        }
+      }
+    }
+
+    setIncomeResult({
+      taxAmount: totalTax,
+      afterTaxAmount: incomeValue - totalTax,
+      effectiveRate: (totalTax / incomeValue) * 100,
+      breakdown
+    });
+  };
+
+useEffect(() => {
+  calculateIncomeTax();
+}, [netProfit]);
+
+  // Turnover Tax State
+  let [turnover, setTurnover] = useState<string>('');
+  turnover = revenuesAmount.toString();
+  const [turnoverResult, setTurnoverResult] = useState<TaxResult | null>(null);
+
+  // Turnover Tax Calculation (usually 1% for small businesses)
+  const calculateTurnoverTax = () => {
+    const turnoverValue = parseFloat(turnover);
+    if (isNaN(turnoverValue) || turnoverValue <= 0) return;
+
+    const rate = 1; // 1% for small businesses
+    const tax = (turnoverValue * rate) / 100;
+    
+    setTurnoverResult({
+      taxAmount: tax,
+      afterTaxAmount: turnoverValue - tax,
+      effectiveRate: rate
+    });
+  };
+
+  useEffect(() => {
+  calculateTurnoverTax();
+}, [revenuesAmount]);
+
+
 
   const reportData = {
     header: {
@@ -479,26 +565,77 @@ export const FinancialReport = () => {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Tax Calculation Summary</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Taxable Income</p>
-                <p className="font-semibold text-blue-600">{formatCurrency(reportData.tax.taxableIncome)}</p>
+            
+              <div className="flex justify-between items-center gap-80">
+                <div>
+                                  {incomeResult && (
+                  <div className="bg-gray-50 rounded-lg p-6 w-[300px]">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Income Tax Breakdown</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Gross Income:</span>
+                        <span className="font-medium">{formatCurrency(parseFloat(income))}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Tax Amount:</span>
+                        <span className="font-medium text-red-600">{formatCurrency(incomeResult.taxAmount)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">After-Tax Income:</span>
+                        <span className="font-medium text-green-600">{formatCurrency(incomeResult.afterTaxAmount)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Effective Rate:</span>
+                        <span className="font-medium">{incomeResult.effectiveRate.toFixed(2)}%</span>
+                      </div>
+                    </div>
+                    
+                    {incomeResult.breakdown && (
+                      <div className="mt-6">
+                        <h4 className="font-medium text-gray-800 mb-3">Tax Breakdown</h4>
+                        {incomeResult.breakdown.map((item, index) => (
+                          <div key={index} className="flex justify-between text-sm mb-2">
+                            <span className="text-gray-600">{item.bracket} ({item.rate}%):</span>
+                            <span>{formatCurrency(item.amount)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                </div>
+
+                <div>
+                  {turnoverResult && (
+                  <div className="bg-gray-50 rounded-lg p-6 w-[300px]">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Turnover Tax Breakdown</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Annual Turnover:</span>
+                        <span className="font-medium">{formatCurrency(parseFloat(turnover))}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Turnover Tax:</span>
+                        <span className="font-medium text-red-600">{formatCurrency(turnoverResult.taxAmount)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">After-Tax Turnover:</span>
+                        <span className="font-medium text-green-600">{formatCurrency(turnoverResult.afterTaxAmount)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Tax Rate:</span>
+                        <span className="font-medium">{turnoverResult.effectiveRate}%</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                </div>
+
+
               </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Tax Rate Applied</p>
-                <p className="font-semibold">{reportData.tax.taxRate}%</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Total Tax Payable</p>
-                <p className="font-semibold text-amber-600">{formatCurrency(reportData.tax.totalTaxPayable)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Previous Tax Paid</p>
-                <p className="font-semibold text-green-600">{formatCurrency(reportData.tax.previousTaxPaid)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Outstanding Balance</p>
-                <p className="font-semibold text-red-600">{formatCurrency(reportData.tax.outstandingBalance)}</p>
-              </div>
+
+
             </div>
           </div>
 
