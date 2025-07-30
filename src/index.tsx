@@ -15,6 +15,7 @@ import ForgotPassword from "./screens/ForgotPassword/ForgotPassword";
 import { PrivateRoute } from "./components/PrivateRoute";
 import { AdminDashboard } from "./screens/AdminDashboard/AdminDashboard";
 import { FinancialReport } from "./screens/AdminDashboard/sections/FinancialReport/FinancialReport";
+import TaxCalculator from "./screens/TaxCalculator/TaxCalculator";
 
 
 
@@ -40,6 +41,7 @@ function App() {
         <Route path="/" element={<PrivateRoute isLoggedIn={isLoggedIn}><Dashboard /></PrivateRoute>} />
         <Route path="/budgetAutomation" element={<PrivateRoute isLoggedIn={isLoggedIn}><BudgetAutomation /></PrivateRoute>} />
         <Route path="/dataAnalytics" element={<PrivateRoute isLoggedIn={isLoggedIn}><DataAnalytics /></PrivateRoute>} />
+        <Route path="/taxCalculations" element={<PrivateRoute isLoggedIn={isLoggedIn}><TaxCalculator /></PrivateRoute>} />
         <Route path="/compliance" element={<PrivateRoute isLoggedIn={isLoggedIn}><Compliance /></PrivateRoute>} />
         <Route path="/settings" element={<PrivateRoute isLoggedIn={isLoggedIn}><Settings /></PrivateRoute>} />
         <Route path="/logout" element={<PrivateRoute isLoggedIn={isLoggedIn}><Lougout /></PrivateRoute>} />

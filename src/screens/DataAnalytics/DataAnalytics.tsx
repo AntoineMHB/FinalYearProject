@@ -46,15 +46,6 @@ export const DataAnalytics = (): JSX.Element => {
       const [departments, setDepartments] = useState<Department[]>([]);
       const reportRef = useRef<HTMLDivElement>(null);
 
-      const navigate = useNavigate();
-
-     function handleClickDownloadButton() {
-      console.log("User is logged in:", user);
-      console.log("Navigating to /downloadReport");
-       navigate("/downloadReport")
-  
-     };
-    
       useEffect(() => {
         const userData = localStorage.getItem("user");
         if (userData) {
@@ -111,18 +102,6 @@ export const DataAnalytics = (): JSX.Element => {
     { height: "105px", top: "15px" },
   ];
 
-    const downloadPDF = () => {
-    if (reportRef.current) {
-      const opt = {
-        margin: 0.5,
-        filename: "financial_report.pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
-      };
-      html2pdf().from(reportRef.current).set(opt).save();
-    }
-  };
 
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full min-h-screen">
