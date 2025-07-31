@@ -16,6 +16,10 @@ import { PrivateRoute } from "./components/PrivateRoute";
 import { AdminDashboard } from "./screens/AdminDashboard/AdminDashboard";
 import { FinancialReport } from "./screens/AdminDashboard/sections/FinancialReport/FinancialReport";
 import TaxCalculator from "./screens/TaxCalculator/TaxCalculator";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentPage from "./pages/PaymentPage";
+
+
 
 
 
@@ -35,6 +39,8 @@ function App() {
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/downloadReport" element={<FinancialReport />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        
 
         {/* Protected Routes */}
         <Route path="/adminDashboard" element={<PrivateRoute isLoggedIn={isLoggedIn}><AdminDashboard /></PrivateRoute>} />
@@ -45,6 +51,7 @@ function App() {
         <Route path="/compliance" element={<PrivateRoute isLoggedIn={isLoggedIn}><Compliance /></PrivateRoute>} />
         <Route path="/settings" element={<PrivateRoute isLoggedIn={isLoggedIn}><Settings /></PrivateRoute>} />
         <Route path="/logout" element={<PrivateRoute isLoggedIn={isLoggedIn}><Lougout /></PrivateRoute>} />
+        <Route path="/paymentPage" element={<PrivateRoute isLoggedIn={isLoggedIn}><PaymentPage /></PrivateRoute>} />
         {/* <Route path="/downloadReport" element={<PrivateRoute isLoggedIn={isLoggedIn}><FinancialReport /></PrivateRoute>} /> */}
 
         {/* Catch-all route */}

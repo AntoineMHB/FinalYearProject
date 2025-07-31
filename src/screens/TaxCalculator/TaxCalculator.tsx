@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Calculator, FileText, DollarSign, Percent, Building, User } from 'lucide-react';
+import { Calculator, FileText, DollarSign, Percent, Building, User, Link } from 'lucide-react';
 import Header from '../../lib/Compenents/Header';
 import { SlideMenuByAnima } from '../DataAnalytics/sections/SlideMenuByAnima';
 import { SettingsLougOutSlideMenu } from '../Dashboard/sections/SettingsLougOutSlideMenu';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface TaxResult {
   taxAmount: number;
@@ -35,6 +36,12 @@ const TaxCalculator: React.FC = () => {
       };
       fetchData();
     }, []);
+
+    const navigate = useNavigate();
+
+    function handleNavigate() {
+      navigate("/paymentPage")
+    }
 
     // here we calculate the net profit
     const netProfit = revenuesAmount - expensesAmount;
@@ -542,7 +549,16 @@ const TaxCalculator: React.FC = () => {
                   >
                     Calculate Turnover Tax
                   </button>
+
+                  <button
+                    onClick={handleNavigate}
+                    className="w-full py-3 px-6 text-white font-medium rounded-lg hover:shadow-lg transition-all duration-200"
+                    style={{ backgroundColor: '#5A57FF' }}
+                  >
+                    Pay Tax 
+                  </button>
                 </div>
+
                 
                 {turnoverResult && (
                   <div className="bg-gray-50 rounded-lg p-6">
@@ -572,15 +588,10 @@ const TaxCalculator: React.FC = () => {
           )}
         </div>
         </main>
+                
       </div>
     </div>
   );
-
-  // export default function TurnoverResult() {
-  //   return (
-
-  //   )
-  // }
 };
 
 export default TaxCalculator;
