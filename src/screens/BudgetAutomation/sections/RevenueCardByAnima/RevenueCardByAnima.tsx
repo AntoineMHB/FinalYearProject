@@ -15,46 +15,123 @@ export const RevenueCardByAnima = (): JSX.Element => {
       const [allBudgets, setAllBudgets] = useState<any[]>([]);
 
       // fetching all budgets for weekly calculation
-      useEffect(() => {
-        const fetchAllBudgets = async () => {
-          try {
-              const response = await axios.get("http://localhost:8080/api/budgets");
-              setAllBudgets(response.data);
-          } catch (error) {
-            console.error("Error fetching all budgets:", error);
-          }
-        };
-        fetchAllBudgets();
-      }, []);
+      // useEffect(() => {
+      //   const fetchAllBudgets = async () => {
+      //     try {
+      //         const response = await axios.get("http://localhost:8080/api/budgets");
+      //         setAllBudgets(response.data);
+      //     } catch (error) {
+      //       console.error("Error fetching all budgets:", error);
+      //     }
+      //   };
+      //   fetchAllBudgets();
+      // }, []);
 
           
       // fetching the total amount of budgets
-          useEffect(() => {
-            const fetchBudgetsAmount = async () => {
-              try {
-                const response = await axios.get("http://localhost:8080/api/budgets/total-budget");
-                setBudgetsAmount(response.data);
-                console.log(response.data);
-              } catch (error) {
-                console.error("Error fetching budgets amount:", error);
-              }
-            };
-            fetchBudgetsAmount();
-          }, []);
+          // useEffect(() => {
+          //   const fetchBudgetsAmount = async () => {
+          //     try {
+          //       const response = await axios.get("http://localhost:8080/api/budgets/total-budget");
+          //       // const budgetsByDptResponse = await axios.get()
+          //       setBudgetsAmount(response.data);
+          //       console.log(response.data);
+          //     } catch (error) {
+          //       console.error("Error fetching budgets amount:", error);
+          //     }
+          //   };
+          //   fetchBudgetsAmount();
+          // }, []);
 
 
             // fetching the total amount of expenses
+              // useEffect(() => {
+              //         const fetchExpensesAmount = async () => {
+              //           try {
+              //             const response = await axios.get("http://localhost:8080/api/expenses/total-expense");
+              //             setExpensesAmount(response.data);
+              //             console.log(response.data);
+              //           } catch (error) {
+              //             console.error("Error fetching expenses amount:", error);
+              //           }
+              //         };
+              //         fetchExpensesAmount();
+              // }, []);
+
+
+              // Load user and department
               useEffect(() => {
-                      const fetchExpensesAmount = async () => {
-                        try {
-                          const response = await axios.get("http://localhost:8080/api/expenses/total-expense");
-                          setExpensesAmount(response.data);
-                          console.log(response.data);
-                        } catch (error) {
-                          console.error("Error fetching expenses amount:", error);
-                        }
-                      };
-                      fetchExpensesAmount();
+                const userJson = localStorage.getItem("user");
+                const departmentJson = localStorage.getItem("department");
+
+                if (!userJson || !departmentJson) {
+                  console.warn("Missing user or department data");
+                  return;
+                }
+
+                  const user = JSON.parse(userJson);
+                  const department = JSON.parse(departmentJson);
+                  const userEmail = user.email;
+                  const userRole = user.role; // assumes you store 'ADMIN' or 'MANAGER'
+
+                  let matchedDepartment: string = "";
+
+                  if (userEmail?.startsWith("IT")) matchedDepartment = "IT";
+                  else if (userEmail?.startsWith("HR")) matchedDepartment = "HR";
+                  else if (userEmail?.startsWith("COM")) matchedDepartment = "COM";
+                  else if (userEmail?.startsWith("Research")) matchedDepartment = "Research";
+
+                  const isManager = userEmail?.endsWith("@gmail.com");
+
+                  // 1. Fetch budgets amount
+                  const fetchBudgetsAmount = async () => {
+                    try {
+                      if (isManager) {
+                        const totalResponse = await axios.get("http://localhost:8080/api/budgets/total-by-department");
+                        setBudgetsAmount(totalResponse.data[matchedDepartment] || 0);
+                      } else {
+                        const totalResponse = await axios.get("http://localhost:8080/api/budgets/total-budget");
+                        setBudgetsAmount(totalResponse.data);
+                      }
+                    } catch (err) {
+                      console.error("Error fetching budgets amount", err);
+                    }
+                  };
+
+                  // 2. Fetch expenses amount
+                  const fetchExpensesAmount = async () => {
+                    try {
+                      if (isManager) {
+                        const totalResponse = await axios.get("http://localhost:8080/api/expenses/total-by-department");
+                        setExpensesAmount(totalResponse.data[matchedDepartment] || 0);
+                      } else {
+                        const totalResponse = await axios.get("http://localhost:8080/api/expenses/total-expense");
+                        setExpensesAmount(totalResponse.data);
+                      }
+                    } catch (err) {
+                      console.error("Error fetching expenses amount", err);
+                    }
+                  }
+
+                  // 3. Fetch all budgets (for weekly projection)
+                  const fetchAllBudgets = async () => {
+                    try {
+                      if (isManager) {
+                        const response = await axios.get(`http://localhost:8080/api/budgets/by-department/${department.id}`);
+                        setAllBudgets(response.data);
+                      } else {
+                        const response = await axios.get("http://localhost:8080/api/budgets");
+                        setAllBudgets(response.data);
+                      }
+                    } catch (err) {
+                      console.error("Error fetching all budgets", err);
+                    }
+                  };
+
+                  // call all fetches
+                    fetchBudgetsAmount();
+                    fetchExpensesAmount();
+                    fetchAllBudgets();
               }, []);
 
               // implementing a simple budget projection

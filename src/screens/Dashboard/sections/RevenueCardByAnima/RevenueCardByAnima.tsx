@@ -1,12 +1,59 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "../../../../components/ui/card";
+import axios from "axios";
 
 export const RevenueCardByAnima = (): JSX.Element => {
+      const [departmentBudgetCount, setDepartmentBudgetCount] = useState(0);
+
+      useEffect(() => {
+        const fetchBudgetCount = async () => {
+          const departmentJson = localStorage.getItem("department");
+          const userJson = localStorage.getItem("user");
+
+        if (!departmentJson || !userJson) {
+          console.warn("Missing department or user data in localStorage.");
+          return;
+        }
+
+        const department = JSON.parse(departmentJson);
+        const user = JSON.parse(userJson);
+        const userEmail = user.email;
+
+        // Determine which department the manager belongs to
+        let matchedDepartment = null;
+
+        if (userEmail?.startsWith("IT")) {
+          matchedDepartment = "IT";
+        } else if (userEmail?.startsWith("HR")) {
+          matchedDepartment = "HR";
+        } else if (userEmail?.startsWith("COM")) {
+          matchedDepartment = "COM";
+        } else if (userEmail?.startsWith("Research")) {
+        matchedDepartment = "Research";
+       }
+
+       // check if the user's department name matches the department stored
+       if (matchedDepartment && department.name === matchedDepartment) {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/api/budgets/departments/${department.id}/budgets/count`
+          );
+          setDepartmentBudgetCount(response.data);
+        } catch (error) {
+          console.error("Error fetching budget count:", error);
+        }
+       } else {
+        console.warn("No matching department found for this manager.");
+       }
+      };
+        fetchBudgetCount();
+      }, []);
+
   // Data for the cards to enable mapping
   const cardData = [
     {
       title: "Total Budgets",
-      value: "12",
+      value: departmentBudgetCount.toString(),
       valueColor: "text-[#0e9cff]",
       actionText: "View Budgets",
       actionColor: "text-[#ea0505]",

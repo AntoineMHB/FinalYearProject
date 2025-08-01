@@ -35,6 +35,7 @@ const AddBudgetForm: React.FC<AddDepartmentFormProps> = ({
         name,
         user: { id: userId },
       });
+      localStorage.setItem("department", JSON.stringify(response.data));
 
       onDepartmentAdded(response.data);
       resetForm();

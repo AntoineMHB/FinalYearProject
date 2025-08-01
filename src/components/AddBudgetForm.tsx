@@ -34,25 +34,62 @@ const AddBudgetForm: React.FC<AddBudgetFormProps> = ({
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
 
 
-        useEffect(() => {
-        const token = localStorage.getItem("token");
-        
-        if (token) {
-          axios.get("http://localhost:8080/api/departments", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            setDepartments(response.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching departments:", error);
-          });
-        } else {
-          console.error("No token found in localStorage");
-        }
-      }, []);
+useEffect(() => {
+  const fetchDepartments = async () => {
+    const token = localStorage.getItem("token");
+    const userJson = localStorage.getItem("user");
+    const departmentJson = localStorage.getItem("department");
+
+    if (!token || !userJson || !departmentJson) {
+      console.warn("Missing token, user or department in localStorage.");
+      return;
+    }
+
+    const user = JSON.parse(userJson);
+    const department = JSON.parse(departmentJson);
+    const userEmail = user.email;
+
+    // Match department based on email prefix
+    let matchedDepartmentName: string | null = null;
+
+    if (userEmail?.startsWith("IT")) {
+      matchedDepartmentName = "IT";
+    } else if (userEmail?.startsWith("HR")) {
+      matchedDepartmentName = "HR";
+    } else if (userEmail?.startsWith("COM")) {
+      matchedDepartmentName = "COM";
+    } else if (userEmail?.startsWith("Research")) {
+      matchedDepartmentName = "Research";
+    }
+
+    try {
+      const response = await axios.get("http://localhost:8080/api/departments", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const allDepartments: Department[] = response.data;
+
+      // Filter only department matching the manager
+      const matched = allDepartments.filter(
+        (dept) => dept.name === matchedDepartmentName
+      );
+
+      setDepartments(matched);
+
+      // Optionally preselect the department
+      if (matched.length === 1) {
+        setSelectedDepartmentId(matched[0].id.toString());
+      }
+
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
+  fetchDepartments();
+}, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
