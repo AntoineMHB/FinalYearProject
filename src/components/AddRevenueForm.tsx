@@ -13,18 +13,16 @@ type AddRevenueFormProps = {
   onClose: () => void;
 };
 
-interface Budget {
-  id: number
-  budgetName: string,
-  amount: number,
-  description: string,
+
+
+interface Department {
+  id: number;
+  name: string;
   user: {
-    user_id: number
-  },
-  department: {
-    "id": number
-  }
+    id: number;
+  };
 }
+
 
 const AddRevenueForm: React.FC<AddRevenueFormProps> = ({ 
   onRevenueAdded, 
@@ -34,28 +32,65 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
   const [revenueAmount, setRevenueAmount] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [selectedBudgetId, setSelectedBudgetId] = useState<string>("");
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
 
-      useEffect(() => {
-        const token = localStorage.getItem("token");
-        
-        if (token) {
-          axios.get("http://localhost:8080/api/budgets", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            setBudgets(response.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching departments:", error);
-          });
-        } else {
-          console.error("No token found in localStorage");
-        }
-      }, []);
+useEffect(() => {
+  const fetchDepartments = async () => {
+    const token = localStorage.getItem("token");
+    const userJson = localStorage.getItem("user");
+    const departmentJson = localStorage.getItem("department");
+
+    if (!token || !userJson || !departmentJson) {
+      console.warn("Missing token, user or department in localStorage.");
+      return;
+    }
+
+    const user = JSON.parse(userJson);
+    const department = JSON.parse(departmentJson);
+    const userEmail = user.email;
+
+    // Match department based on email prefix
+    let matchedDepartmentName: string | null = null;
+
+    if (userEmail?.startsWith("IT")) {
+      matchedDepartmentName = "IT";
+    } else if (userEmail?.startsWith("HR")) {
+      matchedDepartmentName = "HR";
+    } else if (userEmail?.startsWith("COM")) {
+      matchedDepartmentName = "COM";
+    } else if (userEmail?.startsWith("Research")) {
+      matchedDepartmentName = "Research";
+    }
+
+    try {
+      const response = await axios.get("http://localhost:8080/api/departments", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const allDepartments: Department[] = response.data;
+
+      // Filter only department matching the manager
+      const matched = allDepartments.filter(
+        (dept) => dept.name === matchedDepartmentName
+      );
+
+      setDepartments(matched);
+
+      // Optionally preselect the department
+      if (matched.length === 1) {
+        setSelectedDepartmentId(matched[0].id.toString());
+      }
+
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+    }
+  };
+
+  fetchDepartments();
+}, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -75,7 +110,7 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
         amount: revenueAmount,
         description,
         user: { id: userId },
-        budget: { id: selectedBudgetId },
+        department: { id: selectedDepartmentId },
       }, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -198,18 +233,18 @@ const AddRevenueForm: React.FC<AddRevenueFormProps> = ({
                 className="min-h-[100px] resize-none"
               />
             </div>
-                        <Select value={selectedBudgetId} onValueChange={(value) => setSelectedBudgetId(value)}>
-                          <SelectTrigger className="w-80 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
-                            <SelectValue placeholder="Budget" />
-                          </SelectTrigger>
-                          <SelectContent>
-                             {budgets.map((budget) => (
-                                <SelectItem key={budget.id} value={budget.id.toString()}>
-                                  {budget.budgetName}
-                                </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+            <Select value={selectedDepartmentId} onValueChange={(value) => setSelectedDepartmentId(value)}>
+              <SelectTrigger className="w-80 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
+                <SelectValue placeholder="Department" />
+              </SelectTrigger>
+              <SelectContent>
+                 {departments.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id.toString()}>
+                      {dept.name}
+                    </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </form>
         </CardContent>
 

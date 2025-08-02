@@ -102,11 +102,11 @@ export const RevenueCardByAnima = (): JSX.Element => {
                   const fetchExpensesAmount = async () => {
                     try {
                       if (isManager) {
-                        const totalResponse = await axios.get("http://localhost:8080/api/expenses/total-by-department");
-                        setExpensesAmount(totalResponse.data[matchedDepartment] || 0);
+                        const totalResponse = await axios.get(`http://localhost:8080/api/expenses/total-expense-by-dpt/${department.id}`);
+                        setExpensesAmount(totalResponse.data);
+                        console.log(`This is the total expense of this department: ${expensesAmount}` )
                       } else {
                         const totalResponse = await axios.get("http://localhost:8080/api/expenses/total-expense");
-                        setExpensesAmount(totalResponse.data);
                       }
                     } catch (err) {
                       console.error("Error fetching expenses amount", err);
@@ -211,19 +211,26 @@ export const RevenueCardByAnima = (): JSX.Element => {
   const cardData = [
     {
       title: "Total Budget Amount",
-      value: `$ ${budgetsAmount}`,
+      value: budgetsAmount !== null
+            ? `$ ${budgetsAmount.toLocaleString(undefined, { minimumFractionDigits: 1})}`
+            : "Loading...",
       valueColor: "text-[#04AD3C]",
 
     },
     {
       title: "Spent Budget",
-      value: `$ ${expensesAmount}`,
+      value: 
+        expensesAmount !== null
+            ? `$ ${expensesAmount.toLocaleString(undefined, { minimumFractionDigits: 1})}`
+            : "Loading...",
       valueColor: "text-[#EB0606]",
 
     },
     {
       title: "Remaining Budget",
-      value: `$ ${remainingBudget}`,
+      value: remainingBudget !== null
+            ? `$ ${remainingBudget.toLocaleString(undefined, { minimumFractionDigits: 1})}`
+            : "Loading...",
       valueColor: "text-[#FF8B06]",
 
     },
