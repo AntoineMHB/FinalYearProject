@@ -1,110 +1,167 @@
-import React from "react";
-import { Card, CardContent } from "../../../../components/ui/card";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
 
-export const NbchartsLinechatsByAnima = (): JSX.Element => {
-  // Data for the chart
-  const yAxisLabels = [
-    { value: "100", top: 0 },
-    { value: "75", top: 35 },
-    { value: "50", top: 70 },
-    { value: "25", top: 105 },
-    { value: "0", top: 140 },
-  ];
+ChartJS.register(
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
-  const xAxisLabels = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
+interface Expense {
+  id: number;
+  expenseName: string;
+  amount: number;
+  createdAt: string;
+}
 
-  const dataPoints = [
-    { top: 83, left: -0.5 },
-    { top: 55, left: 61 },
-    { top: 26, left: 123 },
-    { top: -0.5, left: 186 },
-    { top: 69, left: 249 },
-    { top: 40, left: 312 },
-    { top: 12, left: 374 },
-  ];
+interface Revenue {
+  id: number;
+  revenueName: string;
+  amount: number;
+  createdAt: string;
+}
+
+export const NbchartsLinechatsByAnima = () => {
+  const [chartData, setChartData] = useState<any>(null);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      try {
+        // Get user and department info from localStorage
+        const userJson = localStorage.getItem("user");
+        const departmentJson = localStorage.getItem("department");
+
+        if (!userJson || !departmentJson) {
+          console.warn("Missing user or department info in localStorage");
+          return;
+        }
+
+        const user = JSON.parse(userJson);
+        const department = JSON.parse(departmentJson);
+
+        // Check if user is manager by email domain (just like your example)
+        const isManager = user.email?.endsWith("@gmail.com");
+
+        // URLs change depending on manager or not
+        const expensesUrl = isManager
+          ? `http://localhost:8080/api/expenses/by-department/${department.id}`
+          : "http://localhost:8080/api/expenses";
+
+        const revenuesUrl = isManager
+          ? `http://localhost:8080/api/revenues/by-department/${department.id}`
+          : "http://localhost:8080/api/revenues";
+
+        // Fetch data from API
+        const [expensesRes, revenuesRes] = await Promise.all([
+          axios.get(expensesUrl),
+          axios.get(revenuesUrl),
+        ]);
+
+        const expenses = expensesRes.data
+          .filter((expense: Expense) => expense.createdAt)
+          .map((expense: Expense) => ({
+            date: expense.createdAt.split("T")[0],
+            amount: expense.amount,
+          }));
+
+        const revenues = revenuesRes.data
+          .filter((revenue: Revenue) => revenue.createdAt)
+          .map((revenue: Revenue) => ({
+            date: revenue.createdAt.split("T")[0],
+            amount: revenue.amount,
+          }));
+
+        const groupByDate = (arr: any[]) => {
+          const map = new Map<string, number>();
+          arr.forEach(({ date, amount }) => {
+            map.set(date, (map.get(date) || 0) + amount);
+          });
+          return Array.from(map.entries())
+            .map(([x, y]) => ({ x, y }))
+            .sort((a, b) => a.x.localeCompare(b.x));
+        };
+
+        const groupedExpenses = groupByDate(expenses);
+        const groupedRevenues = groupByDate(revenues);
+
+        const labels = Array.from(
+          new Set([
+            ...groupedExpenses.map((item) => item.x),
+            ...groupedRevenues.map((item) => item.x),
+          ])
+        ).sort();
+
+        const getAmounts = (data: { x: string; y: number }[]) => {
+          const map = new Map(data.map((d) => [d.x, d.y]));
+          return labels.map((label) => map.get(label) || 0);
+        };
+
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: "Revenue",
+              data: getAmounts(groupedRevenues),
+              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              fill: true,
+              tension: 0.4,
+            },
+            {
+              label: "Expense",
+              data: getAmounts(groupedExpenses),
+              borderColor: "rgba(255, 99, 132, 1)",
+              backgroundColor: "rgba(255, 99, 132, 0.2)",
+              fill: true,
+              tension: 0.4,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "Revenues vs Expenses Over Time",
+      },
+    },
+  };
 
   return (
-    <Card className="w-full h-[182px] relative">
-      <CardContent className="p-0">
-        <div className="relative w-full h-[161px]">
-          {/* Grid lines */}
-          <img
-            className="absolute w-[376px] h-[141px] top-[11px] left-[31px]"
-            alt="Horizontal lines"
-            src="/horizontal-lines.png"
-          />
-          <img
-            className="absolute w-[376px] h-[141px] top-[11px] left-[31px]"
-            alt="Vertical lines"
-            src="/vertical-lines.png"
-          />
-
-          {/* Y-axis labels */}
-          <div className="absolute w-[31px] h-[161px] top-0 left-0">
-            {yAxisLabels.map((label, index) => (
-              <div
-                key={index}
-                className="absolute h-[21px] font-normal text-[#333333] text-xs text-right tracking-[0] leading-normal"
-                style={{
-                  top: `${label.top}px`,
-                  left: label.value.length > 2 ? "0" : "7px",
-                  width: label.value.length > 2 ? "21px" : "14px",
-                }}
-              >
-                {label.value}
-              </div>
-            ))}
-          </div>
-
-          {/* Line chart area */}
-          <img
-            className="absolute w-[377px] h-[100px] top-[52px] left-[31px]"
-            alt="Line area"
-            src="/line---area.png"
-          />
-
-          {/* Data points */}
-          <div className="absolute w-[381px] h-[92px] top-[49px] left-[29px]">
-            {dataPoints.map((point, index) => (
-              <div
-                key={index}
-                className="absolute w-[9px] h-3 bg-white rounded-[4.51px/5.76px] border-2 border-solid border-[#0e9cff]"
-                style={{ top: `${point.top}px`, left: `${point.left}px` }}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* X-axis labels */}
-        <div className="relative w-full h-[21px] mt-0">
-          <div className="flex justify-between px-2.5">
-            {xAxisLabels.map((day, index) => (
-              <div
-                key={index}
-                className="font-normal text-[#333333] text-xs text-center tracking-[0] leading-normal"
-                style={{
-                  width:
-                    day === "Wednesday"
-                      ? "62px"
-                      : day === "Thursday"
-                        ? "50px"
-                        : "auto",
-                }}
-              >
-                {day}
-              </div>
-            ))}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="w-full pl-[15px]">
+      {chartData ? (
+        <Line data={chartData} options={options} />
+      ) : (
+        <p>Loading chart...</p>
+      )}
+    </div>
   );
 };

@@ -135,7 +135,7 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
       console.error("Error adding revenue:", error.response || error.message || error);
       alert(
         error.response?.data?.message ||
-        "An error occurred while adding the revenue. Please try again."
+        "An error occurred while adding the expense. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -251,7 +251,7 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
                           </SelectTrigger>
                           <SelectContent>
                              {budgets.map((budget) => (
-                                <SelectItem key={budget.id} value={budget.budgetName}>
+                                <SelectItem key={budget.id} value={budget.id.toString()}>
                                   {budget.budgetName}
                                 </SelectItem>
                             ))}

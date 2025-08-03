@@ -9,10 +9,9 @@ import {
   Title,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { Card, CardContent, CardTitle } from "../../../../components/ui/card";
 
 ChartJS.register(
   LineElement,
@@ -45,9 +44,34 @@ export const NbchartsLinechatsByAnima = () => {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
+        // Get user and department info from localStorage
+        const userJson = localStorage.getItem("user");
+        const departmentJson = localStorage.getItem("department");
+
+        if (!userJson || !departmentJson) {
+          console.warn("Missing user or department info in localStorage");
+          return;
+        }
+
+        const user = JSON.parse(userJson);
+        const department = JSON.parse(departmentJson);
+
+        // Check if user is manager by email domain (just like your example)
+        const isManager = user.email?.endsWith("@gmail.com");
+
+        // URLs change depending on manager or not
+        const expensesUrl = isManager
+          ? `http://localhost:8080/api/expenses/by-department/${department.id}`
+          : "http://localhost:8080/api/expenses";
+
+        const revenuesUrl = isManager
+          ? `http://localhost:8080/api/revenues/by-department/${department.id}`
+          : "http://localhost:8080/api/revenues";
+
+        // Fetch data from API
         const [expensesRes, revenuesRes] = await Promise.all([
-          axios.get("http://localhost:8080/api/expenses"),
-          axios.get("http://localhost:8080/api/revenues"),
+          axios.get(expensesUrl),
+          axios.get(revenuesUrl),
         ]);
 
         const expenses = expensesRes.data
@@ -133,13 +157,11 @@ export const NbchartsLinechatsByAnima = () => {
 
   return (
     <div className="w-full pl-[15px]">
-      
-        {chartData ? (
-          <Line data={chartData} options={options} />
-        ) : (
-          <p>Loading chart...</p>
-        )}
-      
+      {chartData ? (
+        <Line data={chartData} options={options} />
+      ) : (
+        <p>Loading chart...</p>
+      )}
     </div>
   );
 };
