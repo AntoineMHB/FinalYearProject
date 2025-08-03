@@ -19,23 +19,51 @@ const TaxCalculator: React.FC = () => {
   const [revenuesAmount, setRevenuesAmount] = useState(0);
 
    // Fetching the total expenses and the total revenues
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const [expensesResponse, revenuesResponse] = await Promise.all([
-            axios.get("http://localhost:8080/api/expenses/total-expense"),
-            axios.get("http://localhost:8080/api/revenues/total-amount"),
-          ]);
-          setExpensesAmount(expensesResponse.data);
-          setRevenuesAmount(revenuesResponse.data);
-          console.log("Expenses:", expensesResponse.data);
-          console.log("Revenues:", revenuesResponse.data);
-        } catch (error) {
-          console.error("Error fetching expenses amount:", error);
-        }
-      };
-      fetchData();
-    }, []);
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const userJson = localStorage.getItem("user");
+      const departmentJson = localStorage.getItem("department");
+
+      if (!userJson || !departmentJson) {
+        console.warn("Missing user or department info in localStorage");
+        return;
+      }
+
+      const user = JSON.parse(userJson);
+      const department = JSON.parse(departmentJson);
+
+      // Check if user is manager based on email domain
+      const isManager = user.email?.endsWith("@gmail.com"); // your logic here
+
+      const expensesUrl = isManager
+        ? `http://localhost:8080/api/expenses/total-expense-by-dpt/${department.id}`
+        : "http://localhost:8080/api/expenses/total-expense";
+
+      const revenuesUrl = isManager
+        ? `http://localhost:8080/api/revenues/total-revenue-by-dpt/${department.id}`
+        : "http://localhost:8080/api/revenues/total-amount";
+
+      const [expensesResponse, revenuesResponse] = await Promise.all([
+        axios.get(expensesUrl),
+        axios.get(revenuesUrl),
+      ]);
+
+      setExpensesAmount(expensesResponse.data);
+      setRevenuesAmount(revenuesResponse.data);
+
+      console.log("Expenses:", expensesResponse.data);
+      console.log("Revenues:", revenuesResponse.data);
+    } catch (error) {
+      console.error("Error fetching expenses amount:", error);
+    }
+  };
+
+
+
+  fetchData();
+}, []);
+
 
     const navigate = useNavigate();
 
