@@ -18,6 +18,9 @@ import AddRevenueForm from "../../components/AddRevenueForm";
 import axios from "axios";
 import AddExpenseForm from "../../components/AddExpenseForm";
 import { TransactionsTableByAnimaAdmin } from "../AdminDashboard/sections/TransactionsTableByAnimaAdmin";
+import { MessageCircle } from "lucide-react";
+import ChatbotModal from "../../components/ChatbotModal";
+import FloatingChatButton from "../../components/FloatingChatButton";
 
 
 // Action buttons data
@@ -55,6 +58,7 @@ export const Dashboard = (): JSX.Element => {
   const [showAddExpenseForm, setShowAddExpenseForm] = useState(false);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
   const [departments, setDepartments] = useState<Department[]>([]);
+    const [showChatbot, setShowChatbot] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -122,6 +126,8 @@ export const Dashboard = (): JSX.Element => {
         
       }
     }
+
+  
 
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full">
@@ -287,6 +293,9 @@ export const Dashboard = (): JSX.Element => {
             </div>
           </div>
         </div>
+
+        {showChatbot && <ChatbotModal onClose={() => setShowChatbot(false)}/>}
+          <FloatingChatButton onClick={() => setShowChatbot(true)}/>
       </div>
     </div>
     

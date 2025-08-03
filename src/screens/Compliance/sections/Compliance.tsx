@@ -9,6 +9,7 @@ import { TransactionsTableByAnima } from "./TransactionsTableByAnima";
 import { Button } from "../../../components/ui/button";
 import { SettingsLougOutSlideMenu } from "../../Dashboard/sections/SettingsLougOutSlideMenu";
 import { AuditTrailTable } from "../AuditTrailTable/AuditTrailTable";
+import PaymentList from "../PaymentList/PaymentList";
 
 type User = {
   userId: number;
@@ -158,6 +159,8 @@ export const Compliance = (): JSX.Element => {
             </div>
 
             <AuditTrailTable />
+
+            <PaymentList />
           </div>
         </div>
       </div>
