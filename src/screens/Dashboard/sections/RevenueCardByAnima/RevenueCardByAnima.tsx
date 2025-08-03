@@ -5,6 +5,8 @@ import axios from "axios";
 export const RevenueCardByAnima = (): JSX.Element => {
       const [departmentBudgetCount, setDepartmentBudgetCount] = useState(0);
       const [departmentRevenueTotal, setDepartmentRevenueTotal] = useState(0);
+      const [budgetsAmount, setBudgetsAmount] = useState(0);
+      const [expensesAmount, setExpensesAmount] = useState(0);
 
 
       // Here we fetch all the dpts from the DB and store them in the local storage
@@ -78,10 +80,76 @@ export const RevenueCardByAnima = (): JSX.Element => {
         } catch (error) {
           console.error("Error fetching budget count:", error);
         }
+
+        
       };
 
         fetchBudgetCountAndRevenueByDpt();
       }, []);
+
+      // LOGIC TO CALCULATE THE DEPARTMENT TOTAL BUDGET AND THE DEPARTMENT TOTAL EXPENSE FOR CALCULATING THE BUDGET UTILIZATION PERCENTAGE
+            useEffect(() => {
+                const userJson = localStorage.getItem("user");
+                const departmentJson = localStorage.getItem("department");
+
+                if (!userJson || !departmentJson) {
+                  console.warn("Missing user or department data");
+                  return;
+                }
+
+                  const user = JSON.parse(userJson);
+                  const department = JSON.parse(departmentJson);
+                  const userEmail = user.email;
+                  const userRole = user.role; // assumes you store 'ADMIN' or 'MANAGER'
+
+                  let matchedDepartment: string = "";
+
+                  if (userEmail?.startsWith("IT")) matchedDepartment = "IT";
+                  else if (userEmail?.startsWith("HR")) matchedDepartment = "HR";
+                  else if (userEmail?.startsWith("COM")) matchedDepartment = "COM";
+                  else if (userEmail?.startsWith("Research")) matchedDepartment = "Research";
+
+                  const isManager = userEmail?.endsWith("@gmail.com");
+
+                  // 1. Fetch budgets amount
+                  const fetchBudgetsAmount = async () => {
+                    try {
+                      if (isManager) {
+                        const totalResponse = await axios.get("http://localhost:8080/api/budgets/total-by-department");
+                        setBudgetsAmount(totalResponse.data[matchedDepartment] || 0);
+                      } else {
+                        const totalResponse = await axios.get("http://localhost:8080/api/budgets/total-budget");
+                        setBudgetsAmount(totalResponse.data);
+                      }
+                    } catch (err) {
+                      console.error("Error fetching budgets amount", err);
+                    }
+                  };
+
+                  // 2. Fetch expenses amount
+                  const fetchExpensesAmount = async () => {
+                    try {
+                      if (isManager) {
+                        const totalResponse = await axios.get(`http://localhost:8080/api/expenses/total-expense-by-dpt/${department.id}`);
+                        setExpensesAmount(totalResponse.data);
+                        console.log(`This is the total expense of this department: ${expensesAmount}` )
+                      } else {
+                        const totalResponse = await axios.get("http://localhost:8080/api/expenses/total-expense");
+                        setExpensesAmount(totalResponse.data);
+                      }
+                    } catch (err) {
+                      console.error("Error fetching expenses amount", err);
+                    }
+                  }
+
+                  // call all fetches
+                    fetchBudgetsAmount();
+                    fetchExpensesAmount();
+                 
+              }, []);
+
+      const percentage = (expensesAmount / budgetsAmount) * 100;
+      const formatted = `${percentage.toFixed(1)}%`;
 
   // Data for the cards to enable mapping
   const cardData = [
@@ -119,7 +187,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
     // },
     {
       title: "Budget Utilization",
-      value: "75%",
+      value: formatted,
       valueColor: "text-black",
       actionText: "Analyse spending",
       actionColor: "text-[#ea0505]",

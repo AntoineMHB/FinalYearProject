@@ -26,20 +26,43 @@ export default function ProfitAndLossStatement() {
   useEffect(() => {
     const fetchTotals = async () => {
       try {
-        const [expensesRes, revenuesRes] = await Promise.all([
-          axios.get("http://localhost:8080/api/expenses"),
-          axios.get("http://localhost:8080/api/revenues"),
-        ]);
+        const userJson = localStorage.getItem("user");
+        const departmentJson = localStorage.getItem("department");
 
-        const totalExpenses = expensesRes.data.reduce(
-          (sum: number, expense: Expense) => sum + (expense.amount || 0),
-          0
-        );
+        if (!userJson || !departmentJson) {
+          console.warn("Missing user or department info");
+          return;
+        }
 
-        const totalRevenues = revenuesRes.data.reduce(
-          (sum: number, revenue: Revenue) => sum + (revenue.amount || 0),
-          0
-        );
+        const user = JSON.parse(userJson);
+        const department = JSON.parse(departmentJson);
+        const userEmail = user.email;
+
+        const isManager = userEmail?.endsWith("@gmail.com"); // example check
+
+        let totalExpenses = 0;
+        let totalRevenues = 0;
+
+        if (isManager) {
+          const [expensesRes, revenuesRes] = await Promise.all([
+            axios.get(`http://localhost:8080/api/expenses/total-expense-by-dpt/${department.id}`),
+            axios.get(`http://localhost:8080/api/revenues/total-revenue-by-dpt/${department.id}`),
+          ]);
+
+          totalExpenses = typeof expensesRes.data === "number" ? expensesRes.data : 0;
+          totalRevenues = typeof revenuesRes.data === "number" ? revenuesRes.data : 0;
+        } else {
+          const [expensesRes, revenuesRes] = await Promise.all([
+            axios.get("http://localhost:8080/api/expenses/total-expense"),
+            axios.get("http://localhost:8080/api/revenues/total-revenue"),
+          ]);
+
+          const expensesData: Expense[] = expensesRes.data;
+          const revenuesData: Revenue[] = revenuesRes.data;
+
+          totalExpenses = expensesData.reduce((sum, item) => sum + (item.amount || 0), 0);
+          totalRevenues = revenuesData.reduce((sum, item) => sum + (item.amount || 0), 0);
+        }
 
         const net = totalRevenues - totalExpenses;
 
@@ -80,7 +103,7 @@ export default function ProfitAndLossStatement() {
   const options: ChartOptions<"doughnut"> = {
     plugins: {
       legend: {
-        position: "bottom" as const,
+        position: "bottom",
         labels: {
           boxWidth: 12,
         },
@@ -109,8 +132,12 @@ export default function ProfitAndLossStatement() {
           </div>
           {totals && (
             <div className="mt-4 text-sm text-center text-gray-700">
-              <p className="text-green-600"> <strong>Total Revenue:</strong> ${totals.revenues.toFixed(2)}</p>
-              <p className="text-red-600"> <strong>Total Expenses:</strong> ${totals.expenses.toFixed(2)}</p>
+              <p className="text-green-600">
+                <strong>Total Revenue:</strong> ${totals.revenues.toFixed(2)}
+              </p>
+              <p className="text-red-600">
+                <strong>Total Expenses:</strong> ${totals.expenses.toFixed(2)}
+              </p>
               <p>
                 <strong>{totals.net >= 0 ? "Profit" : "Loss"}:</strong>{" "}
                 <span className={totals.net >= 0 ? "text-green-600" : "text-red-600"}>

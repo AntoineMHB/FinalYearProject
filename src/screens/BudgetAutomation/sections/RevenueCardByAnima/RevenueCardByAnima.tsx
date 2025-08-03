@@ -107,6 +107,7 @@ export const RevenueCardByAnima = (): JSX.Element => {
                         console.log(`This is the total expense of this department: ${expensesAmount}` )
                       } else {
                         const totalResponse = await axios.get("http://localhost:8080/api/expenses/total-expense");
+                        setExpensesAmount(totalResponse.data);
                       }
                     } catch (err) {
                       console.error("Error fetching expenses amount", err);
