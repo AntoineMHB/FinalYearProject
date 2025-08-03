@@ -23,11 +23,37 @@ export const TransactionsTableByAnimaAdmin = (): JSX.Element => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
-    const fetchExpenses = axios.get("http://localhost:8080/api/expenses");
-    const fetchRevenues = axios.get("http://localhost:8080/api/revenues");
+    const fetchTransactions = async () => {
+      try {
+        // Get user and department info from localStorage
+        const userJson = localStorage.getItem("user");
+        const departmentJson = localStorage.getItem("department");
 
-    Promise.all([fetchExpenses, fetchRevenues])
-      .then(([expensesRes, revenuesRes]) => {
+        if (!userJson || !departmentJson) {
+          console.warn("Missing user or department info in localStorage");
+          return;
+        }
+
+        const user = JSON.parse(userJson);
+        const department = JSON.parse(departmentJson);
+
+        // Manager check by email domain (same as your chart component)
+        const isManager = user.email?.endsWith("@gmail.com");
+
+        // Use filtered URLs if manager, otherwise fetch all
+        const expensesUrl = isManager
+          ? `http://localhost:8080/api/expenses/by-department/${department.id}`
+          : "http://localhost:8080/api/expenses";
+
+        const revenuesUrl = isManager
+          ? `http://localhost:8080/api/revenues/by-department/${department.id}`
+          : "http://localhost:8080/api/revenues";
+
+        const [expensesRes, revenuesRes] = await Promise.all([
+          axios.get(expensesUrl),
+          axios.get(revenuesUrl),
+        ]);
+
         const expenses: Transaction[] = expensesRes.data.map((expense: any) => ({
           id: expense.id,
           name: expense.expenseName,
@@ -46,16 +72,17 @@ export const TransactionsTableByAnimaAdmin = (): JSX.Element => {
           type: "REVENUE",
         }));
 
-        // Combine and sort by date (most recent first)
         const allTransactions = [...expenses, ...revenues].sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
 
         setTransactions(allTransactions);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error("Error fetching transactions:", error);
-      });
+      }
+    };
+
+    fetchTransactions();
   }, []);
 
   return (
@@ -63,36 +90,44 @@ export const TransactionsTableByAnimaAdmin = (): JSX.Element => {
       <CardContent className="p-0">
         <div className="h-[238px] overflow-y-auto">
           <Table>
-          <TableHeader>
-            <TableRow className="bg-[#d9d9d9]">
-              <TableHead className="px-6 py-3 font-medium text-black text-sm">Date</TableHead>
-              <TableHead className="px-6 py-3 font-medium text-black text-sm">Type</TableHead>
-              <TableHead className="px-6 py-3 font-medium text-black text-sm">Description</TableHead>
-              <TableHead className="px-6 py-3 font-medium text-black text-sm">Amount</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {transactions.map((tx) => (
-              <TableRow key={`${tx.type}-${tx.id}`} className="bg-white border-b border-[#818181]">
-                <TableCell className="px-6 py-3 font-medium text-[#818181] text-sm">
-                  {new Date(tx.createdAt).toLocaleDateString()}
-                </TableCell>
-                <TableCell className={`px-6 py-3 font-medium text-sm ${
-                  tx.type === "EXPENSE" ? "text-[#EB0606]" : "text-[#04AD3C]"}`}>
-                  {tx.type}
-                </TableCell>
-                <TableCell className="px-6 py-3 font-medium text-[#818181] text-sm">
-                  {tx.description}
-                </TableCell>
-                <TableCell className={`px-6 py-3 font-medium text-sm ${
-                  tx.type === "EXPENSE" ? "text-[#EB0606]" : "text-[#04AD3C]"}`}>
-                  ${tx.amount}
-                </TableCell>
+            <TableHeader>
+              <TableRow className="bg-[#d9d9d9]">
+                <TableHead className="px-6 py-3 font-medium text-black text-sm">Date</TableHead>
+                <TableHead className="px-6 py-3 font-medium text-black text-sm">Type</TableHead>
+                <TableHead className="px-6 py-3 font-medium text-black text-sm">Description</TableHead>
+                <TableHead className="px-6 py-3 font-medium text-black text-sm">Amount</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
+            </TableHeader>
+            <TableBody>
+              {transactions.map((tx) => (
+                <TableRow
+                  key={`${tx.type}-${tx.id}`}
+                  className="bg-white border-b border-[#818181]"
+                >
+                  <TableCell className="px-6 py-3 font-medium text-[#818181] text-sm">
+                    {new Date(tx.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell
+                    className={`px-6 py-3 font-medium text-sm ${
+                      tx.type === "EXPENSE" ? "text-[#EB0606]" : "text-[#04AD3C]"
+                    }`}
+                  >
+                    {tx.type}
+                  </TableCell>
+                  <TableCell className="px-6 py-3 font-medium text-[#818181] text-sm">
+                    {tx.description}
+                  </TableCell>
+                  <TableCell
+                    className={`px-6 py-3 font-medium text-sm ${
+                      tx.type === "EXPENSE" ? "text-[#EB0606]" : "text-[#04AD3C]"
+                    }`}
+                  >
+                    ${tx.amount}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </CardContent>
     </Card>

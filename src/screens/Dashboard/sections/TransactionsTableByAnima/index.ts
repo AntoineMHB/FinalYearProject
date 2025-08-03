@@ -1,1 +1,1 @@
-export { TransactionsTableByAnima } from "./TransactionsTableByAnima";
+export { TransactionsTableByAnimaAdmin } from "./TransactionsTableByAnimaAdmin";

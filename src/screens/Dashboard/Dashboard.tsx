@@ -10,13 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
 import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
-import { TransactionsTableByAnima } from "./sections/TransactionsTableByAnima";
+
 import { SettingsLougOutSlideMenu } from "./sections/SettingsLougOutSlideMenu";
 import { Bell } from "lucide-react";
 import AddBudgetForm from "../../components/AddBudgetForm";
 import AddRevenueForm from "../../components/AddRevenueForm";
 import axios from "axios";
 import AddExpenseForm from "../../components/AddExpenseForm";
+import { TransactionsTableByAnimaAdmin } from "../AdminDashboard/sections/TransactionsTableByAnimaAdmin";
 
 
 // Action buttons data
@@ -259,7 +260,7 @@ export const Dashboard = (): JSX.Element => {
                   Recent Transactions
                 </h2>
               </div>
-              <TransactionsTableByAnima />
+              <TransactionsTableByAnimaAdmin />
             </div>
 
             <div className="col-span-6">
