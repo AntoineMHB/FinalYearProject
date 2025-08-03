@@ -14,17 +14,16 @@ type AddExpenseFormProps = {
 };
 
 interface Budget {
-  id: number
-  budgetName: string,
-  amount: number,
-  description: string,
-  user: {
-    user_id: number
-  },
-  department: {
-    "id": number
-  }
+  id: number;
+  budgetName: string;
+  amount: number;
+  description: string;
+  userId: number;
+  departmentId: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
 
 const AddExpenseForm: React.FC<AddExpenseFormProps> = ({ 
   onExpenseAdded, 
@@ -37,25 +36,73 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [selectedBudgetId, setSelectedBudgetId] = useState<string>("");
 
-      useEffect(() => {
-        const token = localStorage.getItem("token");
-        
-        if (token) {
-          axios.get("http://localhost:8080/api/budgets", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            setBudgets(response.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching departments:", error);
-          });
-        } else {
-          console.error("No token found in localStorage");
-        }
-      }, []);
+ useEffect(() => {
+  const fetchBudgets = async () => {
+    const token = localStorage.getItem("token");
+    const userJson = localStorage.getItem("user");
+    const departmentJson = localStorage.getItem("department");
+
+    if (!token || !userJson || !departmentJson) {
+      console.warn("Missing token, user or department in localStorage.");
+      return;
+    }
+
+    const user = JSON.parse(userJson);
+    const department = JSON.parse(departmentJson);
+    const userEmail = user.email;
+
+    // Determine department name from email prefix
+    let matchedDepartmentName: string | null = null;
+
+    if (userEmail?.startsWith("IT")) {
+      matchedDepartmentName = "IT";
+    } else if (userEmail?.startsWith("HR")) {
+      matchedDepartmentName = "HR";
+    } else if (userEmail?.startsWith("COM")) {
+      matchedDepartmentName = "COM";
+    } else if (userEmail?.startsWith("Research")) {
+      matchedDepartmentName = "Research";
+    }
+
+    try {
+      const deptResponse = await axios.get("http://localhost:8080/api/departments", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const allDepartments = deptResponse.data;
+      const matchedDepartment = allDepartments.find(
+        (dept: any) => dept.name === matchedDepartmentName
+      );
+
+      if (!matchedDepartment) {
+        console.warn("No matching department found for the user.");
+        return;
+      }
+
+      const budgetsResponse = await axios.get("http://localhost:8080/api/budgets", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const allBudgets: Budget[] = budgetsResponse.data;
+
+      // Filter budgets by department ID
+      const filteredBudgets = allBudgets.filter(
+        (budget) => budget.departmentId === matchedDepartment.id
+      );
+
+      setBudgets(filteredBudgets);
+    } catch (error) {
+      console.error("Error fetching budgets:", error);
+    }
+  };
+
+  fetchBudgets();
+}, []);
+
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -204,7 +251,7 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
                           </SelectTrigger>
                           <SelectContent>
                              {budgets.map((budget) => (
-                                <SelectItem key={budget.id} value={budget.id.toString()}>
+                                <SelectItem key={budget.id} value={budget.budgetName}>
                                   {budget.budgetName}
                                 </SelectItem>
                             ))}
@@ -232,10 +279,10 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
             {isSubmitting ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Adding Revenue...
+                Adding Expense...
               </div>
             ) : (
-              'Add Revenue'
+              'Add Expense'
             )}
           </Button>
         </CardFooter>

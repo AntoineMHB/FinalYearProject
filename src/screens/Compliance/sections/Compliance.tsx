@@ -157,9 +157,6 @@ export const Compliance = (): JSX.Element => {
               </div>
             </div>
 
-            {/* Transactions Table */}
-            {/* <TransactionsTableByAnima /> */}
-
             <AuditTrailTable />
           </div>
         </div>
