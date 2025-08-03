@@ -20,6 +20,7 @@ interface Budget {
   description: string;
   userId: number;
   departmentId: number;
+  status: "PENDING" | "APPROVED" | "REJECTED";
   createdAt?: string;
   updatedAt?: string;
 }
@@ -91,8 +92,12 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
 
       // Filter budgets by department ID
       const filteredBudgets = allBudgets.filter(
-        (budget) => budget.departmentId === matchedDepartment.id
+        (budget) => 
+          budget.departmentId === matchedDepartment.id &&
+          budget.status === "APPROVED",
+          
       );
+    
 
       setBudgets(filteredBudgets);
     } catch (error) {

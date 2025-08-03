@@ -17,6 +17,7 @@ import AddDepartmentForm from "../../components/AddDepartmentForm";
 import { SlideMenuByAnimaAdmin } from "./sections/SlideMenuByAnimaAdmin";
 import axios from "axios";
 import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
+import { Link } from "react-router-dom";
 
 
 
@@ -123,9 +124,14 @@ export const AdminDashboard = (): JSX.Element => {
 
             {/* Notification and profile */}
             <div className="flex items-center gap-4">
-              <div className="relative">
-                <Bell className="w-6 h-6 text-gray-600" />
-              </div>
+              <Link
+                to={"/adminBudgets"} 
+              >
+                <div className="relative">
+                  <Bell className="w-6 h-6 text-gray-600" />
+                </div>
+              </Link>
+
 
               <div className="flex items-center gap-3">
                 <div className="relative">
