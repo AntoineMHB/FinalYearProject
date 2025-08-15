@@ -6,7 +6,13 @@ import {
 } from "../../components/ui/avatar";
 import { Button } from "../../components/ui/button";
 import { Card, CardContent } from "../../components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
 import { RevenueCardByAnima } from "./sections/RevenueCardByAnima";
 import { SlideMenuByAnima } from "./sections/SlideMenuByAnima";
@@ -22,13 +28,12 @@ import { MessageCircle } from "lucide-react";
 import ChatbotModal from "../../components/ChatbotModal";
 import FloatingChatButton from "../../components/FloatingChatButton";
 
-
 // Action buttons data
 const actionButtons = [
   { id: 1, text: "Record Transaction", left: "3.5" },
-  { id: 2, text: "Create a Budget", left: "7", action:"showAddBudget" },
-  { id: 3, text: "Record Revenue", left: "5", action:"showAddRevenue" },
-  { id: 4, text: "Add Expense", left: "31", action:"showAddExpense" },
+  { id: 2, text: "Create a Budget", left: "7", action: "showAddBudget" },
+  { id: 3, text: "Record Revenue", left: "5", action: "showAddRevenue" },
+  { id: 4, text: "Add Expense", left: "31", action: "showAddExpense" },
   { id: 5, text: "Submit Taxes", left: "31" },
 ];
 
@@ -37,7 +42,7 @@ type User = {
   firstname: string;
   lastname: string;
   email: string;
-}
+};
 
 interface Department {
   id: number;
@@ -47,18 +52,16 @@ interface Department {
   };
 }
 
-
 export const Dashboard = (): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
   const [activeAction, setActiveAction] = useState("");
-
 
   const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
   const [showAddRevenueForm, setShowAddRevenueForm] = useState(false);
   const [showAddExpenseForm, setShowAddExpenseForm] = useState(false);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
   const [departments, setDepartments] = useState<Department[]>([]);
-    const [showChatbot, setShowChatbot] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -67,86 +70,78 @@ export const Dashboard = (): JSX.Element => {
     }
   }, []);
 
-        useEffect(() => {
-        const token = localStorage.getItem("token");
-        
-        if (token) {
-          axios.get("http://localhost:8080/api/departments", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-          .then((response) => {
-            setDepartments(response.data);
-          })
-          .catch((error) => {
-            console.error("Error fetching departments:", error);
-          });
-        } else {
-          console.error("No token found in localStorage");
-        }
-      }, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
 
-
-
-  
-    // Function to close the Add Budget form
-    const handleBudgetAdded = () => {
-      setShowAddBudgetForm(false); // Close the form after adding an budget
-    };
-
-        const handleExpenseAdded = () => {
-      setShowAddExpenseForm(false); // Close the form after adding an budget
-    };
-
-       const handleRevenueAdded = () => {
-      setShowAddRevenueForm(false); // Close the form after adding an budget
-    };
-
-
-    const handleCloseForm = () => {
-      // setShowAddBudgetForm(false); // Close the form
-      setActiveAction("");
-    };
-
-    //Function to handle the button actions
-    const handleAction = (action: any) => {
-      switch (action) {
-        case "showAddBudget":
-          setActiveAction("showAddBudget");
-          break;
-        case "showAddRevenue":
-          setActiveAction("showAddRevenue");
-          break;
-        case "showAddExpense":
-          setActiveAction("showAddExpense");
-          break;
-        default:
-          console.warn("Unknown action:", action);
-        
-      }
+    if (token) {
+      axios
+        .get("http://localhost:8080/api/departments", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setDepartments(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching departments:", error);
+        });
+    } else {
+      console.error("No token found in localStorage");
     }
+  }, []);
 
-  
+  // Function to close the Add Budget form
+  const handleBudgetAdded = () => {
+    setShowAddBudgetForm(false); // Close the form after adding an budget
+  };
+
+  const handleExpenseAdded = () => {
+    setShowAddExpenseForm(false); // Close the form after adding an budget
+  };
+
+  const handleRevenueAdded = () => {
+    setShowAddRevenueForm(false); // Close the form after adding an budget
+  };
+
+  const handleCloseForm = () => {
+    // setShowAddBudgetForm(false); // Close the form
+    setActiveAction("");
+  };
+
+  //Function to handle the button actions
+  const handleAction = (action: any) => {
+    switch (action) {
+      case "showAddBudget":
+        setActiveAction("showAddBudget");
+        break;
+      case "showAddRevenue":
+        setActiveAction("showAddRevenue");
+        break;
+      case "showAddExpense":
+        setActiveAction("showAddExpense");
+        break;
+      default:
+        console.warn("Unknown action:", action);
+    }
+  };
 
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full">
       <div className="bg-[#faf9ff] overflow-hidden w-[1440px] relative">
         {/* Sidebar */}
         <div className="w-[250px] h-full fixed top-0  bg-[#5a57ff] rounded-[0px_30px_30px_0px] z-10 overflow-auto scrollbar-hide">
-          
-            <div className="pt-10 pl-[53px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
-              LIKUTA Track
-            </div>
-            
-            <div className="pt-[30px]">
-             <SlideMenuByAnima />
-            </div>
+          <div className="pt-10 pl-[53px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
+            LIKUTA Track
+          </div>
 
-            <div className="pt-[30px]">
-              <SettingsLougOutSlideMenu />
-            </div>
-          
+          <div className="pt-[30px]">
+            <SlideMenuByAnima />
+          </div>
+
+          <div className="pt-[30px]">
+            <SettingsLougOutSlideMenu />
+          </div>
         </div>
 
         {/* Main content */}
@@ -154,14 +149,12 @@ export const Dashboard = (): JSX.Element => {
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
             <div>
-              
               <h1 className="font-extrabold text-[#353535] text-4xl [font-family:'Poppins',Helvetica]">
                 Manager Dashboard
               </h1>
               <p className="[font-family:'Poppins',Helvetica] font-medium text-[#cccccc] text-base">
-                Welcome&nbsp;&nbsp;back, {user? user.firstname : "Loading..."}
+                Welcome&nbsp;&nbsp;back, {user ? user.firstname : "Loading..."}
               </p>
-
             </div>
 
             {/* Notification and profile */}
@@ -174,7 +167,10 @@ export const Dashboard = (): JSX.Element => {
                 <div className="relative">
                   <Avatar className="w-[50px] h-[50px]">
                     <AvatarImage src="/ellipse-1.png" alt="Profile" />
-                    <AvatarFallback>{user?.firstname[0]}{user?.lastname[0]}</AvatarFallback>
+                    <AvatarFallback>
+                      {user?.firstname[0]}
+                      {user?.lastname[0]}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="absolute w-3 h-3 top-1 right-0 bg-[#53e88c] rounded-md border-2 border-solid border-[#faf9ff]" />
                 </div>
@@ -191,7 +187,7 @@ export const Dashboard = (): JSX.Element => {
             </div>
           </div>
 
-              <div className=" pb-[20px]">
+          {/* <div className=" pb-[20px]">
                 <Select value={selectedDepartmentId} onValueChange={(value) => setSelectedDepartmentId(value)} >
                   <SelectTrigger className="w-80 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
                     <SelectValue placeholder="Select your Department"/>
@@ -205,37 +201,41 @@ export const Dashboard = (): JSX.Element => {
                   </SelectContent>
                 </Select>
 
+              </div> */}
+
+          {/* Centered Modal */}
+          {activeAction === "showAddBudget" && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+                <AddBudgetForm
+                  onBudgetAdded={handleBudgetAdded}
+                  onClose={handleCloseForm}
+                />
               </div>
+            </div>
+          )}
 
-                {/* Centered Modal */}
-      {activeAction === "showAddBudget" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
-            <AddBudgetForm onBudgetAdded={handleBudgetAdded} onClose={handleCloseForm}  />
-          </div>
-        </div>
-      )}
+          {activeAction === "showAddRevenue" && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+                <AddRevenueForm
+                  onRevenueAdded={handleRevenueAdded}
+                  onClose={handleCloseForm}
+                />
+              </div>
+            </div>
+          )}
 
-
-      {activeAction === "showAddRevenue" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
-            <AddRevenueForm onRevenueAdded={handleRevenueAdded} onClose={handleCloseForm}  />
-          </div>
-        </div>
-      )}
-
-
-      {activeAction === "showAddExpense" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
-            <AddExpenseForm onExpenseAdded={handleExpenseAdded} onClose={handleCloseForm}  />
-          </div>
-        </div>
-      )}
-
-
-
+          {activeAction === "showAddExpense" && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+                <AddExpenseForm
+                  onExpenseAdded={handleExpenseAdded}
+                  onClose={handleCloseForm}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Action buttons */}
           <div className="flex gap-3 mb-8">
@@ -294,10 +294,9 @@ export const Dashboard = (): JSX.Element => {
           </div>
         </div>
 
-        {showChatbot && <ChatbotModal onClose={() => setShowChatbot(false)}/>}
-          <FloatingChatButton onClick={() => setShowChatbot(true)}/>
+        {showChatbot && <ChatbotModal onClose={() => setShowChatbot(false)} />}
+        <FloatingChatButton onClick={() => setShowChatbot(true)} />
       </div>
     </div>
-    
   );
 };

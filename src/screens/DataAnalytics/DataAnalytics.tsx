@@ -30,7 +30,7 @@ type User = {
   firstname: string;
   lastname: string;
   email: string;
-}
+};
 
 interface Department {
   id: number;
@@ -40,38 +40,38 @@ interface Department {
   };
 }
 
-
 export const DataAnalytics = (): JSX.Element => {
-      const [user, setUser] = useState<User | null>(null);
-      const [departments, setDepartments] = useState<Department[]>([]);
-      const reportRef = useRef<HTMLDivElement>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const reportRef = useRef<HTMLDivElement>(null);
 
-      useEffect(() => {
-        const userData = localStorage.getItem("user");
-        if (userData) {
-          setUser(JSON.parse(userData));
-        }
-      }, []);
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
-          useEffect(() => {
-            const token = localStorage.getItem("token");
-            
-            if (token) {
-              axios.get("http://localhost:8080/api/departments", {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              })
-              .then((response) => {
-                setDepartments(response.data);
-              })
-              .catch((error) => {
-                console.error("Error fetching departments:", error);
-              });
-            } else {
-              console.error("No token found in localStorage");
-            }
-          }, []);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      axios
+        .get("http://localhost:8080/api/departments", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        .then((response) => {
+          setDepartments(response.data);
+        })
+        .catch((error) => {
+          console.error("Error fetching departments:", error);
+        });
+    } else {
+      console.error("No token found in localStorage");
+    }
+  }, []);
   // Data for the financial metrics
   const financialMetrics = [
     {
@@ -101,7 +101,6 @@ export const DataAnalytics = (): JSX.Element => {
     { height: "71px", top: "49px" },
     { height: "105px", top: "15px" },
   ];
-
 
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full min-h-screen">
@@ -140,7 +139,10 @@ export const DataAnalytics = (): JSX.Element => {
                     src="https://c.animaapp.com/masu33i4lo9YhV/img/ellipse-1.png"
                     alt="User avatar"
                   />
-                  <AvatarFallback>{user?.firstname[0]}{user?.lastname[0]}</AvatarFallback>
+                  <AvatarFallback>
+                    {user?.firstname[0]}
+                    {user?.lastname[0]}
+                  </AvatarFallback>
                 </Avatar>
                 <Badge className="absolute w-3 h-3 top-1 right-0 bg-[#53e88c] rounded-md border-2 border-solid border-[#faf9ff]" />
               </div>
@@ -155,32 +157,28 @@ export const DataAnalytics = (): JSX.Element => {
             </div>
           </div>
         </header>
-        
 
+        {/* Sidebar */}
+        <div className="w-[250px] h-full fixed top-0  bg-[#5a57ff] rounded-[0px_30px_30px_0px] z-10 overflow-auto scrollbar-hide">
+          <div className="pt-10 pl-[53px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
+            LIKUTA Track
+          </div>
 
-                {/* Sidebar */}
-                <div className="w-[250px] h-full fixed top-0  bg-[#5a57ff] rounded-[0px_30px_30px_0px] z-10 overflow-auto scrollbar-hide">
-                  
-                    <div className="pt-10 pl-[53px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
-                      LIKUTA Track
-                    </div>
-                    
-                    <div className="pt-[30px]">
-                     <SlideMenuByAnima />
-                    </div>
-        
-                    <div className="pt-[30px]">
-                      <SettingsLougOutSlideMenu />
-                    </div>
-                  
-                </div>
+          <div className="pt-[30px]">
+            <SlideMenuByAnima />
+          </div>
+
+          <div className="pt-[30px]">
+            <SettingsLougOutSlideMenu />
+          </div>
+        </div>
 
         {/* Main Content */}
         <main className="ml-[280px] p-6">
           <div className="mt-[2px]">
             {/* Revenue Cards Section */}
             <div>
-            <Select>
+              {/* <Select>
                 <SelectTrigger className="w-36 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
                     <SelectValue placeholder="Department" />
                       </SelectTrigger>
@@ -191,55 +189,48 @@ export const DataAnalytics = (): JSX.Element => {
                           </SelectItem>
                         ))}
                     </SelectContent>
-              </Select>
-          
-          </div>
+              </Select> */}
+            </div>
             <RevenueCardByAnima />
 
-
-
-            
-             <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               {/* Charts Section */}
               <div className="flex flex-wrap gap-6 mt-2">
-               {/* Revenue & Expense Trends */}
+                {/* Revenue & Expense Trends */}
                 <Card className="w-[600px] h-[289px] border border-solid border-[#5a57ff1a] rounded-3xl bg-white">
                   <CardContent className="p-6">
                     <h3 className="font-['Poppins',Helvetica] font-medium text-[#b0b0b4] text-base">
                       Revenue &amp; Expense Trends
                     </h3>
-                 <NbchartsLinechatsByAnima />
+                    <NbchartsLinechatsByAnima />
                   </CardContent>
                 </Card>
 
-                          {/* Action Buttons */}
+                {/* Action Buttons */}
                 <div className="flex-wrap gap-4 mt-[-12px] mb-[10px]">
-                  <Link 
-                      to={"/downloadReport"}
-                      className="mt-4 inline-flex items-center justify-center w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg text-xl font-bold font-['Poppins',Helvetica]"
-                    >
-                        Generate Reports
-                    </Link>
+                  <Link
+                    to={"/downloadReport"}
+                    className="mt-4 inline-flex items-center justify-center w-[504px] h-[54px] bg-[#5a57ff] text-white hover:bg-[#4a47ef] rounded-[20px] shadow-lg text-xl font-bold font-['Poppins',Helvetica]"
+                  >
+                    Generate Reports
+                  </Link>
                 </div>
               </div>
 
               <div className="flex flex-wrap gap-1 mt-2">
-              
-              {/* Expense Breakdown */}
-              <ExpenseBreakdown />
+                {/* Expense Breakdown */}
+                <ExpenseBreakdown />
 
-
-                          {/* Profit and Loss Statement */}
-              <Card className="w-[507px] h-[206px] border border-solid border-[#5a57ff1a] rounded-3xl shadow-lg">
-                <CardContent className="p-6">
-                  <h3 className="font-['Poppins',Helvetica] font-medium text-[#b0b0b4] text-base">
-                    Profit and Loss Statement
-                  </h3>
-                <ProfitAndLossStatement />
-                </CardContent>
-              </Card>
-
-             </div>
+                {/* Profit and Loss Statement */}
+                <Card className="w-[507px] h-[206px] border border-solid border-[#5a57ff1a] rounded-3xl shadow-lg">
+                  <CardContent className="p-6">
+                    <h3 className="font-['Poppins',Helvetica] font-medium text-[#b0b0b4] text-base">
+                      Profit and Loss Statement
+                    </h3>
+                    <ProfitAndLossStatement />
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </main>
