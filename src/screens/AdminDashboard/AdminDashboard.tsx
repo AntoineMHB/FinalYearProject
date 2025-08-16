@@ -17,21 +17,16 @@ import AddDepartmentForm from "../../components/AddDepartmentForm";
 import { SlideMenuByAnimaAdmin } from "./sections/SlideMenuByAnimaAdmin";
 import axios from "axios";
 import { NbchartsLinechatsByAnima } from "./sections/NbchartsLinechatsByAnima";
-import { Link } from "react-router-dom";
-
-
-
-
-
+import { Link, useNavigate } from "react-router-dom";
 
 // Action buttons data
 const actionButtons = [
-//   { id: 1, text: "Record Transaction", left: "3.5" },
-  { id: 2, text: "Create a Budget", left: "7", action:"showAddBudget" },
-  { id: 3, text: "Record Revenue", left: "5", action:"showAddRevenue" },
-  { id: 4, text: "Add Expense", left: "31", action:"showAddExpense" },
-//   { id: 5, text: "Submit Taxes", left: "31" },
-  { id: 6, text: "Add Department", left: "31", action:"showAddDepartment" },
+  //   { id: 1, text: "Record Transaction", left: "3.5" },
+  // { id: 2, text: "Create a Budget", left: "7", action:"showAddBudget" },
+  // { id: 3, text: "Record Revenue", left: "5", action:"showAddRevenue" },
+  // { id: 4, text: "Add Expense", left: "31", action:"showAddExpense" },
+  //   { id: 5, text: "Submit Taxes", left: "31" },
+  { id: 6, text: "Add Department", left: "31", action: "showAddDepartment" },
 ];
 
 type User = {
@@ -39,7 +34,7 @@ type User = {
   firstname: string;
   lastname: string;
   email: string;
-}
+};
 
 export const AdminDashboard = (): JSX.Element => {
   const [user, setUser] = useState<User | null>(null);
@@ -48,6 +43,12 @@ export const AdminDashboard = (): JSX.Element => {
   const [showAddBudgetForm, setShowAddBudgetForm] = useState(false);
   const [showAddDepartmentForm, setShowAddDepartmentForm] = useState(false);
 
+  const navigate = useNavigate();
+
+  const handleApproveBudget = () => {
+    navigate("/adminBudgets");
+  };
+
   useEffect(() => {
     const userData = localStorage.getItem("user");
     if (userData) {
@@ -55,58 +56,53 @@ export const AdminDashboard = (): JSX.Element => {
     }
   }, []);
 
-  
-    // Function to close the Add Budget form
-    const handleBudgetAdded = () => {
-      setShowAddBudgetForm(false); // Close the form after adding an budget
-    };
+  // Function to close the Add Budget form
+  const handleBudgetAdded = () => {
+    setShowAddBudgetForm(false); // Close the form after adding an budget
+  };
 
-    const handleDepartmentAdded = () => {
-      setShowAddDepartmentForm(false); // Close the form after adding an budget
-    };
+  const handleDepartmentAdded = () => {
+    setShowAddDepartmentForm(false); // Close the form after adding an budget
+  };
 
+  const handleCloseForm = () => {
+    // setShowAddBudgetForm(false); // Close the form
+    setActiveAction("");
+  };
 
-    const handleCloseForm = () => {
-      // setShowAddBudgetForm(false); // Close the form
-      setActiveAction("");
-    };
-
-    //Function to handle the button actions
-    const handleAction = (action: any) => {
-      switch (action) {
-        case "showAddBudget":
-          setActiveAction("showAddBudget");
-          break;
-        case "showAddDepartment":
-          setActiveAction("showAddDepartment");
-          break;
-        case "showAddExpense":
-          setActiveAction("showAddExpense");
-          break;
-        default:
-          console.warn("Unknown action:", action);
-        
-      }
+  //Function to handle the button actions
+  const handleAction = (action: any) => {
+    switch (action) {
+      case "showAddBudget":
+        setActiveAction("showAddBudget");
+        break;
+      case "showAddDepartment":
+        setActiveAction("showAddDepartment");
+        break;
+      case "showAddExpense":
+        setActiveAction("showAddExpense");
+        break;
+      default:
+        console.warn("Unknown action:", action);
     }
+  };
 
   return (
     <div className="bg-[#faf9ff] flex flex-row justify-center w-full">
       <div className="bg-[#faf9ff] overflow-hidden w-[1440px] relative">
         {/* Sidebar */}
         <div className="w-[250px] h-full fixed top-0  bg-[#5a57ff] rounded-[0px_30px_30px_0px] z-10 overflow-auto scrollbar-hide">
-          
-            <div className="pt-10 pl-[53px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
-              LIKUTA Track
-            </div>
-            
-            <div className="pt-[30px]">
-             <SlideMenuByAnimaAdmin />
-            </div>
+          <div className="pt-10 pl-[53px] [font-family:'Poppins',Helvetica] font-bold text-white text-xl">
+            LIKUTA Track
+          </div>
 
-            <div className="pt-[30px]">
-              <SettingsLougOutSlideMenu />
-            </div>
-          
+          <div className="pt-[30px]">
+            <SlideMenuByAnimaAdmin />
+          </div>
+
+          <div className="pt-[30px]">
+            <SettingsLougOutSlideMenu />
+          </div>
         </div>
 
         {/* Main content */}
@@ -118,26 +114,26 @@ export const AdminDashboard = (): JSX.Element => {
                 Admin Dashboard
               </h1>
               <p className="[font-family:'Poppins',Helvetica] font-medium text-[#cccccc] text-base">
-                Welcome&nbsp;&nbsp;back, {user? user.firstname : "Loading..."}
+                Welcome&nbsp;&nbsp;back, {user ? user.firstname : "Loading..."}
               </p>
             </div>
 
             {/* Notification and profile */}
             <div className="flex items-center gap-4">
-              <Link
-                to={"/adminBudgets"} 
-              >
+              <Link to={"/adminBudgets"}>
                 <div className="relative">
                   <Bell className="w-6 h-6 text-gray-600" />
                 </div>
               </Link>
 
-
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <Avatar className="w-[50px] h-[50px]">
                     <AvatarImage src="/ellipse-1.png" alt="Profile" />
-                    <AvatarFallback>{user?.firstname[0]}{user?.lastname[0]}</AvatarFallback>
+                    <AvatarFallback>
+                      {user?.firstname[0]}
+                      {user?.lastname[0]}
+                    </AvatarFallback>
                   </Avatar>
                   <div className="absolute w-3 h-3 top-1 right-0 bg-[#53e88c] rounded-md border-2 border-solid border-[#faf9ff]" />
                 </div>
@@ -154,26 +150,28 @@ export const AdminDashboard = (): JSX.Element => {
             </div>
           </div>
 
-                {/* Centered Modal */}
-      {activeAction === "showAddBudget" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
-            <AddBudgetForm onBudgetAdded={handleBudgetAdded} onClose={handleCloseForm}  />
-          </div>
-        </div>
-      )}
+          {/* Centered Modal */}
+          {activeAction === "showAddBudget" && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+                <AddBudgetForm
+                  onBudgetAdded={handleBudgetAdded}
+                  onClose={handleCloseForm}
+                />
+              </div>
+            </div>
+          )}
 
-
-     {activeAction === "showAddDepartment" && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
-            <AddDepartmentForm onDepartmentAdded={handleDepartmentAdded} onClose={handleCloseForm}  />
-          </div>
-        </div>
-      )}
-
-
-
+          {activeAction === "showAddDepartment" && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white rounded-lg p-6 shadow-lg w-full max-w-md">
+                <AddDepartmentForm
+                  onDepartmentAdded={handleDepartmentAdded}
+                  onClose={handleCloseForm}
+                />
+              </div>
+            </div>
+          )}
 
           {/* Action buttons */}
           <div className="flex gap-3 mb-8">
@@ -191,6 +189,17 @@ export const AdminDashboard = (): JSX.Element => {
                 </span>
               </Button>
             ))}
+
+            <Button
+              onClick={handleApproveBudget}
+              className="h-[50px] hover:bg-blue-50 bg-white rounded-[20px] border border-solid border-gray-300 shadow-[0px_4px_4px_#00000040]"
+            >
+              <span
+                className={`[font-family:'Poppins',Helvetica] font-medium text-black text-xl`}
+              >
+                Approve Budget
+              </span>
+            </Button>
           </div>
 
           {/* Revenue cards section */}
@@ -233,6 +242,5 @@ export const AdminDashboard = (): JSX.Element => {
         </div>
       </div>
     </div>
-    
   );
 };
