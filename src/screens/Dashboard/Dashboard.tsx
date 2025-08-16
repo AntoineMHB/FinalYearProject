@@ -27,14 +27,15 @@ import { TransactionsTableByAnimaAdmin } from "../AdminDashboard/sections/Transa
 import { MessageCircle } from "lucide-react";
 import ChatbotModal from "../../components/ChatbotModal";
 import FloatingChatButton from "../../components/FloatingChatButton";
+import { useNavigate } from "react-router-dom";
 
 // Action buttons data
 const actionButtons = [
-  { id: 1, text: "Record Transaction", left: "3.5" },
-  { id: 2, text: "Create a Budget", left: "7", action: "showAddBudget" },
+  // { id: 1, text: "Record Transaction", left: "3.5" },
+  { id: 2, text: "Create a Budget", left: "15", action: "showAddBudget" },
   { id: 3, text: "Record Revenue", left: "5", action: "showAddRevenue" },
   { id: 4, text: "Add Expense", left: "31", action: "showAddExpense" },
-  { id: 5, text: "Submit Taxes", left: "31" },
+  // { id: 5, text: "Submit Taxes", left: "31", action: "showTaxCalculator" },
 ];
 
 type User = {
@@ -109,6 +110,12 @@ export const Dashboard = (): JSX.Element => {
     setActiveAction("");
   };
 
+  const navigate = useNavigate();
+
+  const handleSumbitTaxes = () => {
+    navigate("/taxCalculations");
+  };
+
   //Function to handle the button actions
   const handleAction = (action: any) => {
     switch (action) {
@@ -120,6 +127,9 @@ export const Dashboard = (): JSX.Element => {
         break;
       case "showAddExpense":
         setActiveAction("showAddExpense");
+        break;
+      case "showTaxCalculator":
+        setActiveAction("showTaxCalculator");
         break;
       default:
         console.warn("Unknown action:", action);
@@ -238,7 +248,7 @@ export const Dashboard = (): JSX.Element => {
           )}
 
           {/* Action buttons */}
-          <div className="flex gap-3 mb-8">
+          <div className="flex items-center justify-center gap-3 mb-8">
             {actionButtons.map((button) => (
               <Button
                 key={button.id}
@@ -253,6 +263,16 @@ export const Dashboard = (): JSX.Element => {
                 </span>
               </Button>
             ))}
+            <Button
+              onClick={handleSumbitTaxes}
+              className="h-[50px] bg-white hover:bg-blue-50 rounded-[20px] border border-solid border-gray-300 shadow-[0px_4px_4px_#00000040]"
+            >
+              <span
+                className={`[font-family:'Poppins',Helvetica] font-medium text-black text-xl`}
+              >
+                Submit Taxes
+              </span>
+            </Button>
           </div>
 
           {/* Revenue cards section */}

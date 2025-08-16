@@ -45,12 +45,18 @@ export default function ProfitAndLossStatement() {
 
         if (isManager) {
           const [expensesRes, revenuesRes] = await Promise.all([
-            axios.get(`http://localhost:8080/api/expenses/total-expense-by-dpt/${department.id}`),
-            axios.get(`http://localhost:8080/api/revenues/total-revenue-by-dpt/${department.id}`),
+            axios.get(
+              `http://localhost:8080/api/expenses/total-expense-by-dpt/${department.id}`
+            ),
+            axios.get(
+              `http://localhost:8080/api/revenues/total-revenue-by-dpt/${department.id}`
+            ),
           ]);
 
-          totalExpenses = typeof expensesRes.data === "number" ? expensesRes.data : 0;
-          totalRevenues = typeof revenuesRes.data === "number" ? revenuesRes.data : 0;
+          totalExpenses =
+            typeof expensesRes.data === "number" ? expensesRes.data : 0;
+          totalRevenues =
+            typeof revenuesRes.data === "number" ? revenuesRes.data : 0;
         } else {
           const [expensesRes, revenuesRes] = await Promise.all([
             axios.get("http://localhost:8080/api/expenses/total-expense"),
@@ -60,8 +66,17 @@ export default function ProfitAndLossStatement() {
           const expensesData: Expense[] = expensesRes.data;
           const revenuesData: Revenue[] = revenuesRes.data;
 
-          totalExpenses = expensesData.reduce((sum, item) => sum + (item.amount || 0), 0);
-          totalRevenues = revenuesData.reduce((sum, item) => sum + (item.amount || 0), 0);
+          console.log("ExpensesRes:", expensesRes.data);
+          console.log("RevenuesRes:", revenuesRes.data);
+
+          totalExpenses = expensesData.reduce(
+            (sum, item) => sum + (item.amount || 0),
+            0
+          );
+          totalRevenues = revenuesData.reduce(
+            (sum, item) => sum + (item.amount || 0),
+            0
+          );
         }
 
         const net = totalRevenues - totalExpenses;
@@ -140,7 +155,11 @@ export default function ProfitAndLossStatement() {
               </p>
               <p>
                 <strong>{totals.net >= 0 ? "Profit" : "Loss"}:</strong>{" "}
-                <span className={totals.net >= 0 ? "text-green-600" : "text-red-600"}>
+                <span
+                  className={
+                    totals.net >= 0 ? "text-green-600" : "text-red-600"
+                  }
+                >
                   ${Math.abs(totals.net).toFixed(2)}
                 </span>
               </p>
