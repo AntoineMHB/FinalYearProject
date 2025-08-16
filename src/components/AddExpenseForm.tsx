@@ -4,9 +4,22 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { XIcon, DollarSign, FileText, Tag } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 type AddExpenseFormProps = {
   onExpenseAdded: (data: any | null) => void;
@@ -25,10 +38,9 @@ interface Budget {
   updatedAt?: string;
 }
 
-
-const AddExpenseForm: React.FC<AddExpenseFormProps> = ({ 
-  onExpenseAdded, 
-  onClose 
+const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
+  onExpenseAdded,
+  onClose,
 }) => {
   const [expenseName, setExpenseName] = useState<string>("");
   const [expenseAmount, setExpenseAmount] = useState<string>("");
@@ -36,78 +48,96 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [selectedBudgetId, setSelectedBudgetId] = useState<string>("");
+  const [validBudgets, setValidBudgets] = useState<Budget[]>([]);
+  const [isBudgetValid, setIsBudgetValid] = useState(false);
 
- useEffect(() => {
-  const fetchBudgets = async () => {
-    const token = localStorage.getItem("token");
-    const userJson = localStorage.getItem("user");
-    const departmentJson = localStorage.getItem("department");
+  useEffect(() => {
+    setIsBudgetValid(validBudgets.length > 0);
+  }, [validBudgets]);
 
-    if (!token || !userJson || !departmentJson) {
-      console.warn("Missing token, user or department in localStorage.");
-      return;
-    }
+  useEffect(() => {
+    const fetchBudgets = async () => {
+      const token = localStorage.getItem("token");
+      const userJson = localStorage.getItem("user");
+      const departmentJson = localStorage.getItem("department");
 
-    const user = JSON.parse(userJson);
-    const department = JSON.parse(departmentJson);
-    const userEmail = user.email;
-
-    // Determine department name from email prefix
-    let matchedDepartmentName: string | null = null;
-
-    if (userEmail?.startsWith("IT")) {
-      matchedDepartmentName = "IT";
-    } else if (userEmail?.startsWith("HR")) {
-      matchedDepartmentName = "HR";
-    } else if (userEmail?.startsWith("COM")) {
-      matchedDepartmentName = "COM";
-    } else if (userEmail?.startsWith("Research")) {
-      matchedDepartmentName = "Research";
-    }
-
-    try {
-      const deptResponse = await axios.get("http://localhost:8080/api/departments", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const allDepartments = deptResponse.data;
-      const matchedDepartment = allDepartments.find(
-        (dept: any) => dept.name === matchedDepartmentName
-      );
-
-      if (!matchedDepartment) {
-        console.warn("No matching department found for the user.");
+      if (!token || !userJson || !departmentJson) {
+        console.warn("Missing token, user or department in localStorage.");
         return;
       }
 
-      const budgetsResponse = await axios.get("http://localhost:8080/api/budgets", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const user = JSON.parse(userJson);
+      const department = JSON.parse(departmentJson);
+      const userEmail = user.email;
 
-      const allBudgets: Budget[] = budgetsResponse.data;
+      // Determine department name from email prefix
+      let matchedDepartmentName: string | null = null;
 
-      // Filter budgets by department ID
-      const filteredBudgets = allBudgets.filter(
-        (budget) => 
-          budget.departmentId === matchedDepartment.id &&
-          budget.status === "APPROVED",
-          
-      );
-    
+      if (userEmail?.startsWith("IT")) {
+        matchedDepartmentName = "IT";
+      } else if (userEmail?.startsWith("HR")) {
+        matchedDepartmentName = "HR";
+      } else if (userEmail?.startsWith("COM")) {
+        matchedDepartmentName = "COM";
+      } else if (userEmail?.startsWith("Research")) {
+        matchedDepartmentName = "Research";
+      }
 
-      setBudgets(filteredBudgets);
-    } catch (error) {
-      console.error("Error fetching budgets:", error);
-    }
-  };
+      try {
+        const deptResponse = await axios.get(
+          "http://localhost:8080/api/departments",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-  fetchBudgets();
-}, []);
+        const allDepartments = deptResponse.data;
+        const matchedDepartment = allDepartments.find(
+          (dept: any) => dept.name === matchedDepartmentName
+        );
 
+        if (!matchedDepartment) {
+          console.warn("No matching department found for the user.");
+          return;
+        }
+
+        const budgetsResponse = await axios.get(
+          "http://localhost:8080/api/budgets",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const allBudgets: Budget[] = budgetsResponse.data;
+
+        // Filter budgets by department ID
+        const filteredBudgets = allBudgets.filter(
+          (budget) =>
+            budget.departmentId === matchedDepartment.id &&
+            budget.status === "APPROVED"
+        );
+
+        // Filter valid budgets whose amount is greater than the expense amount
+        const allValidBudgets = allBudgets.filter(
+          (budget) =>
+            budget.departmentId === matchedDepartment.id &&
+            budget.status === "APPROVED" &&
+            budget.amount > Number(expenseAmount)
+        );
+
+        setBudgets(filteredBudgets);
+        setValidBudgets(allValidBudgets);
+      } catch (error) {
+        console.error("Error fetching budgets:", error);
+      }
+    };
+
+    fetchBudgets();
+  }, [expenseAmount]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -122,25 +152,32 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
         throw new Error("User ID not found. Please log in.");
       }
 
-      const response = await axios.post("http://localhost:8080/api/expenses", {
-        expenseName,
-        amount: expenseAmount,
-        description,
-        user: { id: userId },
-        budget: { id: selectedBudgetId },
-      }, {
-        headers:{
-          Authorization: `Bearer ${token}`
+      const response = await axios.post(
+        "http://localhost:8080/api/expenses",
+        {
+          expenseName,
+          amount: expenseAmount,
+          description,
+          user: { id: userId },
+          budget: { id: selectedBudgetId },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       onExpenseAdded(response.data);
       resetForm();
     } catch (error: any) {
-      console.error("Error adding revenue:", error.response || error.message || error);
+      console.error(
+        "Error adding revenue:",
+        error.response || error.message || error
+      );
       alert(
         error.response?.data?.message ||
-        "An error occurred while adding the expense. Please try again."
+          "An error occurred while adding the expense. Please try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -160,7 +197,7 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4">
+    <div className="w-full max-w-2xl mx-auto p-4 max-h-[700px] overflow-y-auto">
       <Card className="shadow-lg border-0 bg-white">
         <CardHeader className="bg-gradient-to-r from-[#5a57ff] to-[#7c79ff] text-white rounded-t-lg">
           <div className="flex justify-between items-start">
@@ -250,18 +287,28 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
                 className="min-h-[100px] resize-none"
               />
             </div>
-                        <Select value={selectedBudgetId} onValueChange={(value) => setSelectedBudgetId(value)}>
-                          <SelectTrigger className="w-80 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
-                            <SelectValue placeholder="Budget" />
-                          </SelectTrigger>
-                          <SelectContent>
-                             {budgets.map((budget) => (
-                                <SelectItem key={budget.id} value={budget.id.toString()}>
-                                  {budget.budgetName}
-                                </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+            <Select
+              value={selectedBudgetId}
+              onValueChange={(value) => setSelectedBudgetId(value)}
+            >
+              <SelectTrigger className="w-80 h-[34px] rounded-xl border border-solid border-[#5a57ff1a] shadow-md">
+                <SelectValue placeholder="Budget" />
+              </SelectTrigger>
+              {isBudgetValid ? (
+                <SelectContent>
+                  {budgets.map((budget) => (
+                    <SelectItem key={budget.id} value={budget.id.toString()}>
+                      {budget.budgetName}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              ) : (
+                <p className="text-red-500 font-light text-justify">
+                  Your expense amount is greater than the amount allocated to
+                  all your budgets
+                </p>
+              )}
+            </Select>
           </form>
         </CardContent>
 
@@ -279,7 +326,9 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
             type="submit"
             className="flex-1 h-11 bg-[#5a57ff] hover:bg-[#4845ff]"
             onClick={handleSubmit}
-            disabled={isSubmitting || !expenseName.trim() || !expenseAmount.trim()}
+            disabled={
+              isSubmitting || !expenseName.trim() || !expenseAmount.trim()
+            }
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
@@ -287,7 +336,7 @@ const AddExpenseForm: React.FC<AddExpenseFormProps> = ({
                 Adding Expense...
               </div>
             ) : (
-              'Add Expense'
+              "Add Expense"
             )}
           </Button>
         </CardFooter>
